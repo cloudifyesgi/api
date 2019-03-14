@@ -1,0 +1,36 @@
+{
+  "name": "cloudify_api",
+  "version": "1.0.0",
+  "description": "Cloudify API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "API",
+    "REST",
+    "Mongoose",
+    "MongoDB",
+    "Express"
+  ],
+  "author": [
+    {
+      "name": "Luis VALDEZ"
+    },
+    {
+      "name": "Zineddine BOUDAOUD"
+    },
+    {
+      "name": "Patrick ZHUANG"
+    }
+  ],
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-jwt": "^5.3.0",
+    "mongoose": "^5.0.4",
+    "mongoose-bcrypt": "^1.5.0",
+    "mongoose-string-query": "^0.2.5"
+  }
+}
