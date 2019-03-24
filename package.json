@@ -1,33 +1,30 @@
 {
-	"name": "cloudify_api",
-	"version": "1.0.0",
-	"description": "ESGI school projet",
-	"scripts": {
-		"start": "cd dist && node server.js",
-		"watch": "nodemon start",
-		"build": "start build.bat"
-	},
-	"author": [
-		{
-			"name": "Luis VALDEZ"
-		},
-		{
-			"name": "Zineddine BOUDAOUD"
-		},
-		{
-			"name": "Patrick ZHUANG"
-		}
-	],
-	"keywords": [
-		"API",
-		"Express",
-		"REST",
-		"Mongoose",
-		"MongoDB"
-	],
-	"dependencies": {
-		"babel": "^6.23.0",
-		"babel-cli": "^6.26.0",
-		"babel-preset-env": "^1.6.1"
-	}
+    "name": "cloudify",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node src/index.js",
+        "dev": "nodemon src/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "dotenv": "^7.0.0",
+        "express": "^4.16.4",
+        "mongoose": "^5.4.19",
+        "mongoose-bcrypt": "^1.6.0",
+        "morgan": "^1.9.1"
+    },
+    "devDependencies": {
+        "@types/body-parser": "^1.17.0",
+        "@types/dotenv": "^6.1.0",
+        "@types/express": "^4.16.1",
+        "@types/mongoose": "^5.3.23",
+        "@types/morgan": "^1.7.35",
+        "nodemon": "^1.18.10"
+    }
 }
