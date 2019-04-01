@@ -1,5 +1,6 @@
 'use strict';
-const bcrypt  = require('mongoose-bcrypt')
+const bcrypt  = require('mongoose-bcrypt');
+const bcryptNode = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -75,18 +76,24 @@ const schema = new Schema(
         autoCreate: true,
         collection: 'User'
     }
-    );
+);
 
-class UserClasse {
+class UserClass {
 
     constructor() {
     }
 
-
+    // comparePassword(password) {
+    //     return bcryptNode.compareSync(password, this.password);
+    // };
 }
 
-schema.plugin(bcrypt);
-schema.loadClass(UserClasse);
-var User = mongoose.model('User', schema);
+schema.methods.comparePassword = function (password) {
+    return bcryptNode.compareSync(password, this.password);
+};
 
-module.exports = exports = User;
+schema.plugin(bcrypt);
+schema.loadClass(UserClass);
+const User = mongoose.model('User', schema);
+
+module.exports = User;

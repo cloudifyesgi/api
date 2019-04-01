@@ -4,11 +4,15 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
 const UserController = require("../controllers").UserController;
+const AuthController = require('../controllers').AuthController;
 
 router.use(bodyParser.json());
+// router.use(AuthController.authenticate());
 
 router.get('/', async (req, res, next) => {
     const users = await UserController.getAll(req,res);
+    console.log('user route');
+    console.log(req.user);
     res.json(users);
 });
 

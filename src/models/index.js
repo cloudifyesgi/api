@@ -3,5 +3,5 @@
 
 module.exports = {
     User: require('./User'),
-    UserGroup: require('./UserGroup'),
+    UserGroup: require('./UserGroup')
 };
