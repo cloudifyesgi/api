@@ -12,7 +12,7 @@ router.use(bodyParser.json());
 router.get('/', async (req, res, next) => {
     const users = await UserController.getAll(req,res);
     console.log('user route');
-    console.log(req.user);
+    // console.log(req.user);
     res.json(users);
 });
 

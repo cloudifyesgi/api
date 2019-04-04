@@ -15,35 +15,23 @@ class UserController {
             email : email,
             password:password
         });
-        await newUser.save((err,newUser) =>{
-            if (err) return console.error(err);
-            else console.log(newUser);
-        });
+         return await newUser.save();
     }
 
-    async getAll() {
-        let users = await User.find({},'email name firstname phone_number address postal city is_deleted rank language',function(err,users){
-            if(err){
-                console.error(err);
-                return undefined;
-            } else{
-                return users;
-            }
-        });
-        return users;
+     async getAll(cb) {
+        return await User.find({}, '-password', cb);
     }
 
     async getByEmail(email) {
-        let user = await User.findOne({email:email},function(err,user){
-            if(err){
+        return await User.findOne({email: email}, function (err, user) {
+            if (err) {
                 console.error(err);
                 return undefined;
-            } else{
+            } else {
 
                 return user;
             }
         });
-        return user;
 
     }
 

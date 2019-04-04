@@ -2,6 +2,8 @@
 const bcrypt  = require('mongoose-bcrypt');
 const bcryptNode = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
+
+mongoose.set('useCreateIndex', true);
 const Schema = mongoose.Schema;
 
 
@@ -83,14 +85,10 @@ class UserClass {
     constructor() {
     }
 
-    // comparePassword(password) {
-    //     return bcryptNode.compareSync(password, this.password);
-    // };
+    comparePassword(password) {
+        return bcryptNode.compareSync(password, this.password);
+    };
 }
-
-schema.methods.comparePassword = function (password) {
-    return bcryptNode.compareSync(password, this.password);
-};
 
 schema.plugin(bcrypt);
 schema.loadClass(UserClass);

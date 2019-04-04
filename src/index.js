@@ -1,13 +1,13 @@
 'use strict';
 
 require('dotenv').config();
-require('./utils/db');
+const dbConnection = require('./utils').db.dev_connection;
 const express = require('express');
 const morgan = require('morgan');
 
 const RouterBuilder = require('./routes');
 const app = express();
-
+dbConnection();
 app.use(morgan('dev'));
 
 app.get('/', (req, res, next) => {
