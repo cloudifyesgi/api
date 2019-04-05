@@ -1,7 +1,15 @@
 'use strict';
 
 require('dotenv').config();
-const dbConnection = require('./utils').db.dev_connection;
+const modeEnv = process.env.MODE_ENV || 'development';
+let dbConnection;
+
+if(modeEnv === 'development') {
+     dbConnection = require('./utils').db.dev_connection;
+} else if(modeEnv === 'production') {
+     dbConnection = require('./utils').db.dev_connection;
+}
+
 const express = require('express');
 const morgan = require('morgan');
 
