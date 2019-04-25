@@ -7,12 +7,10 @@ const UserController = require("../controllers").UserController;
 const AuthController = require('../controllers').AuthController;
 
 router.use(bodyParser.json());
-// router.use(AuthController.authenticate());
+router.use(AuthController.authenticate());
 
-router.get('/', async (req, res, next) => {
-    const users = await UserController.getAll(req,res);
-    console.log('user route');
-    // console.log(req.user);
+router.get('/', UserController.checkLevel(1), async (req, res, next) => {
+    const users = await UserController.getAll('-password');
     res.json(users);
 });
 
@@ -45,7 +43,7 @@ router.put('/', async (req, res, next) => {
     const language = req.body.language ;
     try {
 
-        const g = await UserController.updateUser(
+        const g = await UserController.update(
             email,
             password,
             name,

@@ -2,6 +2,5 @@
 
 
 module.exports = {
-    'db': require('./db'),
-    'tests': require('./tests')
+    'Logger': require('./Logger')
 };

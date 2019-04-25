@@ -1,13 +1,13 @@
 'use strict';
 
 const models = require('../../models');
+const Controller = require('../Controller');
 const User = models.User;
 
 
-class UserController {
-
+class UserController extends Controller {
     constructor() {
-
+        super(User);
     }
 
     async create(email,password) {
@@ -18,24 +18,23 @@ class UserController {
          return await newUser.save();
     }
 
-     async getAll(cb) {
-        return await User.find({}, '-password', cb);
-    }
+    //  async getAll() {
+    //     return await User.find({}, '-password');
+    // }
 
     async getByEmail(email) {
-        return await User.findOne({email: email}, function (err, user) {
-            if (err) {
-                console.error(err);
-                return undefined;
-            } else {
-
-                return user;
-            }
-        });
-
+        return await User.findOne({email: email});
     }
 
-    async updateUser(email, password, name, firstname, phone_number, address, postal, city, is_deleted, rank, language) {
+    checkLevel(level) {
+        return (req, res, next) => {
+            if(req.user.rank >= 1) {
+                next();
+            }
+            else res.status(401).end();
+        }
+    }
+    async update(email, password, name, firstname, phone_number, address, postal, city, is_deleted, rank, language) {
 
         let user = await this.getByEmail(email);
         if(user === undefined){
