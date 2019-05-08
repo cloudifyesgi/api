@@ -64,6 +64,19 @@ router.put('/', async (req, res, next) => {
     }
 });
 
+router.delete('/', async (req, res, next) => {
+    const email = req.body.email;
+    if(email === undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const g = await UserController.deleteUser(email);
+        res.status(201).end();
+    } catch(err) {
+        res.status(409).end();
+    }
+});
+
 
 
 module.exports = router;

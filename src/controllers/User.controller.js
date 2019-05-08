@@ -90,6 +90,18 @@ class UserController {
         return user;
     }
 
+    async deleteUser(email) {
+        let user = await this.getByEmail(email);
+        if(user === undefined){
+            return undefined;
+        }
+
+        await User.remove({email : email}, (err) => {
+            if (err) return console.error(err);
+            else console.log("user " + email + " deleted");
+        });
+    }
+
 }
 
 module.exports = new UserController();
