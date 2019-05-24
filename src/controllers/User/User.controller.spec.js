@@ -47,8 +47,11 @@ describe('User Controller', () => {
     });
 
     describe('#update()', () => {
-        it('should return an User', async () => {
-            const users = await userController.getByEmail('l@l.fr');
+        it('should return 1', async () => {
+            const fields = {
+                name: 'Luis'
+            };
+            const numAffected = await userController.update()
             expect(users).to.not.be.undefined;
         });
 

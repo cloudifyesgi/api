@@ -31,31 +31,11 @@ router.put('/', async (req, res, next) => {
         return res.status(400).end();
     }
 
-    const password = req.body.password;
-    const name = req.body.name ;
-    const firstname = req.body.firstname ;
-    const phone_number = req.body.phone_number ;
-    const address = req.body.address ;
-    const postal = req.body.postal ;
-    const city = req.body.city ;
-    const is_deleted = req.body.is_deleted ;
-    const rank = req.body.rank ;
-    const language = req.body.language ;
     try {
+        const g = await UserController.update(email, req.body);
 
-        const g = await UserController.update(
-            email,
-            password,
-            name,
-            firstname,
-            phone_number,
-            address,
-            postal,
-            city,
-            is_deleted,
-            rank,
-            language);
-        res.status(201).end();
+        if(g === null || g === undefined) res.status(204).end();
+        else res.status(200).end();
     } catch(err) {
         console.log(err);
         res.status(400).end();
