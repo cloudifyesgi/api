@@ -11,7 +11,7 @@ class Controller {
     }
 
     async getById(id) {
-        return await this.model.findOne({id: id});
+        return await this.model.findOne({_id: id});
     }
 
     async update(model, fields) {
