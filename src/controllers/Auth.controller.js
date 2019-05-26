@@ -3,7 +3,7 @@
 const models = require('../models');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-require('../config/passport')(passport);
+require('../config').passport(passport);
 const dotenv = require('dotenv');
 dotenv.config();
 const User = models.User;

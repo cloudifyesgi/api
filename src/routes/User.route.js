@@ -7,16 +7,21 @@ const UserController = require("../controllers").UserController;
 const AuthController = require('../controllers').AuthController;
 
 router.use(bodyParser.json());
-// router.use(AuthController.authenticate());
+router.use(AuthController.authenticate());
 
-router.get('/', async (req, res, next) => {
-    const users = await UserController.getAll(req,res);
-    console.log('user route');
-    console.log(req.user);
+router.get('/', UserController.checkLevel(1), async (req, res) => {
+    const users = await UserController.getAll('-password');
     res.json(users);
+}).get('/:email', UserController.checkLevel(1), async (req, res) => {
+    try {
+        const users = await UserController.getByEmail(req.params.email);
+        res.json(users);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     try {
@@ -33,31 +38,11 @@ router.put('/', async (req, res, next) => {
         return res.status(400).end();
     }
 
-    const password = req.body.password;
-    const name = req.body.name ;
-    const firstname = req.body.firstname ;
-    const phone_number = req.body.phone_number ;
-    const address = req.body.address ;
-    const postal = req.body.postal ;
-    const city = req.body.city ;
-    const is_deleted = req.body.is_deleted ;
-    const rank = req.body.rank ;
-    const language = req.body.language ;
     try {
+        const g = await UserController.update(email, req.body);
 
-        const g = await UserController.updateUser(
-            email,
-            password,
-            name,
-            firstname,
-            phone_number,
-            address,
-            postal,
-            city,
-            is_deleted,
-            rank,
-            language);
-        res.status(201).end();
+        if(g === null || g === undefined) res.status(204).end();
+        else res.status(200).end();
     } catch(err) {
         console.log(err);
         res.status(400).end();
@@ -70,8 +55,9 @@ router.delete('/', async (req, res, next) => {
         return res.status(400).end();
     }
     try {
-        const g = await UserController.deleteUser(email);
-        res.status(201).end();
+        const g = await UserController.delete(email);
+        console.log(g);
+        res.status(200).end();
     } catch(err) {
         res.status(409).end();
     }
