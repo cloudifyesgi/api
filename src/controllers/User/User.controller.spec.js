@@ -47,17 +47,29 @@ describe('User Controller', () => {
     });
 
     describe('#update()', () => {
-        it('should return 1', async () => {
+        it('should return User updated', async () => {
             const fields = {
                 name: 'Luis'
             };
-            const numAffected = await userController.update()
-            expect(users).to.not.be.undefined;
+            const user = await userController.update('l@l.fr', fields);
+            expect(user).to.not.be.undefined;
+            expect(user.name).to.be.equal(fields.name);
         });
 
         it('should return undefined', async () => {
-            const users = await userController.getByEmail('li@l.fr');
-            expect(users).to.be.null;
+            const fields = {
+                name: 'Luis'
+            };
+            const user = await userController.update('l@lp.fr', fields);
+            expect(user).to.be.undefined;
+        });
+
+    });
+
+    describe('#delete()', () => {
+        it('should return null', async () => {
+            const user = await userController.delete('l@l.fr');
+            expect(user).to.be.null;
         });
     });
 

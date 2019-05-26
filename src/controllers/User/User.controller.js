@@ -19,10 +19,6 @@ class UserController extends Controller {
         return await newUser.save();
     }
 
-    //  async getAll() {
-    //     return await User.find({}, '-password');
-    // }
-
     async getByEmail(email) {
         return await User.findOne({email: email});
     }
@@ -36,9 +32,13 @@ class UserController extends Controller {
     }
 
     async update(email, fields) {
-
         let user = await this.getByEmail(email);
         return await super.update(user, fields);
+    }
+
+    async delete(email) {
+        let user = await this.getByEmail(email);
+        return await super.delete(user);
     }
 
 }

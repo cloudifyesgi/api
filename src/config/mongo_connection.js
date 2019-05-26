@@ -21,5 +21,6 @@ module.exports = async (modeEnv) => {
             }
         );
 
+    mongoose.set('useFindAndModify', false);
     return dev_connection;
 };

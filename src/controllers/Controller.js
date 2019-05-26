@@ -20,19 +20,29 @@ class Controller {
             return undefined;
         }
 
-        return await this.model.findOneAndUpdate(
+        const res = await this.model.findOneAndUpdate(
             {
-                email: model.email
+                _id: model._id
             }, {
                 $set: fields
             }, {
-                new: false
-            }, (err, model) => {
-                if (err) {
-                    console.log(err);
-                    return undefined;
-                }
+                new : true
             });
+
+        return res;
+    }
+
+    async delete(model) {
+        if(model === undefined){
+            return undefined;
+        }
+        return await this.model.findOneAndDelete({_id : model._id}, (err) => {
+            if (err) {
+                console.error(err);
+                return false;
+            }
+            else return true;
+        });
     }
 }
 
