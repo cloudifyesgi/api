@@ -14,7 +14,7 @@ class DirectoryController extends Controller{
         let newDirectory = new Directory({
             name:name,path:path,date_create:date_create
         });
-        await newDirectory.save();
+        return await newDirectory.save();
     }
 
     async update(id, fields) {

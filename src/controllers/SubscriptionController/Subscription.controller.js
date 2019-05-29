@@ -14,7 +14,7 @@ class SubscriptionController extends Controller{
         let newSubscription = new Subscription({
             name:name,storage:storage,file_number:file_number,file_size:file_size,price:price,description:description,directory_number:directory_number,status:status
         });
-        await newSubscription.save();
+        return await newSubscription.save();
     }
 
     async update(id, fields) {

@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let LinkController;
-let Link;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Link Controller', () => {
     describe('#create()', () => {
         it('should return new Link', async () => {
-            const Link = await LinkController.create(/**/);
+            const Link = await LinkController.create('string','string','2019-04-20',true,'string');
             expect(Link).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Link Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Link', async () => {
-
-            const Link = await LinkController.getById(/**/);
-            expect(Link).to.not.be.undefined;
+            let test = await LinkController.getAll();
+            test = test[0];
+            const Link = await LinkController.getById(test._id);
+            expect(Link).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Link = await LinkController.getById(/**/);
+            const Link = await LinkController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Link).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Link updated', async () => {
+            let test = await LinkController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Link = await LinkController.update(/**/, fields);
+            const Link = await LinkController.update(test._id, fields);
             expect(Link).to.not.be.undefined;
             expect(Link.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Link Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Link = await LinkController.update(/**/, fields);
+            const Link = await LinkController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Link).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Link Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Link = await LinkController.delete(/**/);
-            expect(Link).to.be.null;
+            let test = await LinkController.getAll();
+            test = test[0];
+            const Link = await LinkController.delete(test._id);
+            expect(Link).to.not.be.undefined;
         });
     });
 

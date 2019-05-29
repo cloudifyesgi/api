@@ -14,7 +14,7 @@ class HistoryController extends Controller{
         let newHistory = new History({
             action:action,date:date
         });
-        await newHistory.save();
+        return await newHistory.save();
     }
 
     async update(id, fields) {

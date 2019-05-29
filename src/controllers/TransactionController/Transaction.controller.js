@@ -14,7 +14,7 @@ class TransactionController extends Controller{
         let newTransaction = new Transaction({
             date:date,type:type,reference:reference,path:path,name_subscription:name_subscription,price_subscription:price_subscription
         });
-        await newTransaction.save();
+        return await newTransaction.save();
     }
 
     async update(id, fields) {

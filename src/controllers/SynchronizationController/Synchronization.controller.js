@@ -14,7 +14,7 @@ class SynchronizationController extends Controller{
         let newSynchronization = new Synchronization({
             local_path:local_path
         });
-        await newSynchronization.save();
+        return await newSynchronization.save();
     }
 
     async update(id, fields) {

@@ -12,5 +12,6 @@ module.exports = {
     History: require('./History'),
     Link: require('./Link'),
     Directory: require('./Directory'),
-    Synchronization: require('./Synchronization')
+    Synchronization: require('./Synchronization'),
+    Subscription: require('./Subscription'),
 };

@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let SubscriptionController;
-let Subscription;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Subscription Controller', () => {
     describe('#create()', () => {
         it('should return new Subscription', async () => {
-            const Subscription = await SubscriptionController.create(/**/);
+            const Subscription = await SubscriptionController.create('string',67,67,67,67,'string',67,true);
             expect(Subscription).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Subscription Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Subscription', async () => {
-
-            const Subscription = await SubscriptionController.getById(/**/);
-            expect(Subscription).to.not.be.undefined;
+            let test = await SubscriptionController.getAll();
+            test = test[0];
+            const Subscription = await SubscriptionController.getById(test._id);
+            expect(Subscription).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Subscription = await SubscriptionController.getById(/**/);
+            const Subscription = await SubscriptionController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Subscription).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Subscription updated', async () => {
+            let test = await SubscriptionController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Subscription = await SubscriptionController.update(/**/, fields);
+            const Subscription = await SubscriptionController.update(test._id, fields);
             expect(Subscription).to.not.be.undefined;
             expect(Subscription.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Subscription Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Subscription = await SubscriptionController.update(/**/, fields);
+            const Subscription = await SubscriptionController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Subscription).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Subscription Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Subscription = await SubscriptionController.delete(/**/);
-            expect(Subscription).to.be.null;
+            let test = await SubscriptionController.getAll();
+            test = test[0];
+            const Subscription = await SubscriptionController.delete(test._id);
+            expect(Subscription).to.not.be.undefined;
         });
     });
 

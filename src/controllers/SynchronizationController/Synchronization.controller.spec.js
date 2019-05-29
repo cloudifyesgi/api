@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let SynchronizationController;
-let Synchronization;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Synchronization Controller', () => {
     describe('#create()', () => {
         it('should return new Synchronization', async () => {
-            const Synchronization = await SynchronizationController.create(/**/);
+            const Synchronization = await SynchronizationController.create('string');
             expect(Synchronization).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Synchronization Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Synchronization', async () => {
-
-            const Synchronization = await SynchronizationController.getById(/**/);
-            expect(Synchronization).to.not.be.undefined;
+            let test = await SynchronizationController.getAll();
+            test = test[0];
+            const Synchronization = await SynchronizationController.getById(test._id);
+            expect(Synchronization).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Synchronization = await SynchronizationController.getById(/**/);
+            const Synchronization = await SynchronizationController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Synchronization).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Synchronization updated', async () => {
+            let test = await SynchronizationController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Synchronization = await SynchronizationController.update(/**/, fields);
+            const Synchronization = await SynchronizationController.update(test._id, fields);
             expect(Synchronization).to.not.be.undefined;
             expect(Synchronization.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Synchronization Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Synchronization = await SynchronizationController.update(/**/, fields);
+            const Synchronization = await SynchronizationController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Synchronization).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Synchronization Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Synchronization = await SynchronizationController.delete(/**/);
-            expect(Synchronization).to.be.null;
+            let test = await SynchronizationController.getAll();
+            test = test[0];
+            const Synchronization = await SynchronizationController.delete(test._id);
+            expect(Synchronization).to.not.be.undefined;
         });
     });
 
