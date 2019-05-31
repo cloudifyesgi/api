@@ -15,8 +15,8 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     res.json(users);
 }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
-        const Directorys = await DirectoryController.getById(req.params.id);
-        res.json(Directorys);
+        const Directories = await DirectoryController.getById(req.params.id);
+        res.json(Directories);
     } catch (e) {
         res.status(409).end();
     }
@@ -24,7 +24,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await DirectoryController.create(req.body.name,req.body.path,req.body.date_create);
+        const g = await DirectoryController.create(req.body.name,req.body.path,req.body.date_create,req.user._id,req.user._id,req.body.parent_directory);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();

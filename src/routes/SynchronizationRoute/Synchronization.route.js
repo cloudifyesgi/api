@@ -10,10 +10,22 @@ const AuthController = require('../../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
+
+router.get('/directory/:directory', async (req, res) => {
+    try {
+        const g = await SynchronizationController.getByDirectory(req.params.directory);
+        res.json(g);
+        res.status(201).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
+
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     const users = await SynchronizationController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+    }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
         const Synchronizations = await SynchronizationController.getById(req.params.id);
         res.json(Synchronizations);
@@ -24,7 +36,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await SynchronizationController.create(req.body.local_path);
+        const g = await SynchronizationController.create(req.body.local_path,req.body.directory,req.user._id);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();
