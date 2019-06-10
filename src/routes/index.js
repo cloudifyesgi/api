@@ -16,6 +16,7 @@ class RouterBuilder {
         app.use('/Link', require('./LinkRoute/Link.route'));
         app.use('/Directory', require('./DirectoryRoute/Directory.route'));
         app.use('/Synchronization', require('./SynchronizationRoute/Synchronization.route'));
+        app.use('/Download', require('./DownloadRoute/Download.route'));
     }
 
 }
