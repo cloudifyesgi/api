@@ -13,6 +13,7 @@ const modeEnv = process.env.MODE_ENV || 'development';
 const mongoConnection = require('./config').mongo_connection;
 const express = require('express');
 const morgan = require('morgan');
+const fs = require('fs');
 
 const RouterBuilder = require('./routes');
 const app = express();
@@ -25,7 +26,26 @@ app.get('/', (req, res, next) => {
 });
 
 RouterBuilder.build(app);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
+io.on('connection', function(client) {
+    console.log('Client connected !');
+
+    client.on('file_created', function(data)   {
+        fs.writeFile(process.env.FILES_PATH + data.file_name, data.content, function (err) {
+            if (err) throw err;
+        });
+    });
+
+    client.on('file_deleted', function (data) {
+        fs.unlink(process.env.FILES_PATH + data.file_name, function (err) {
+            if (err) throw err;
+        });
+    });
+
+});
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on ${port} ....`));
+server.listen(port, () => console.log(`Listening on ${port} ....`));
+//app.listen(port, () => console.log(`Listening on ${port} ....`));
