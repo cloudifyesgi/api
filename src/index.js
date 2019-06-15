@@ -33,15 +33,35 @@ io.on('connection', function(client) {
     console.log('Client connected !');
 
     client.on('file_created', function(data)   {
-        fs.writeFile(process.env.FILES_PATH + data.file_name, data.content, function (err) {
+        fs.writeFile(process.env.FILES_PATH + data.name, data.content, function (err) {
             if (err) throw err;
+            console.log(data.name + ' file created !');
         });
     });
 
     client.on('file_deleted', function (data) {
-        fs.unlink(process.env.FILES_PATH + data.file_name, function (err) {
-            if (err) throw err;
-        });
+        let isFolder = fs.lstatSync(process.env.FILES_PATH + data.name).isDirectory();
+        if(isFolder) {
+            fs.rmdir(process.env.FILES_PATH + data.name, function (err) {
+                if (err) throw err;
+            });
+            console.log(data.name + ' folder deleted !');
+        }
+        else {
+            fs.unlink(process.env.FILES_PATH + data.name, function (err) {
+                if (err) throw err;
+            });
+            console.log(data.name + ' file deleted !');
+        }
+    });
+
+    client.on('folder_created', function(data)   {
+        if(!fs.existsSync(process.env.FILES_PATH + data.name)) {
+            fs.mkdir(process.env.FILES_PATH + data.name, function (err) {
+                if (err) throw err;
+            });
+            console.log(data.name + ' folder created !');
+        }
     });
 
 });
