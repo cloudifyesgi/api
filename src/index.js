@@ -1,5 +1,7 @@
 'use strict';
 
+const FileController = require("./controllers").FileController;
+const DirectoryController = require("./controllers").DirectoryController;
 require('dotenv').config();
 const modeEnv = process.env.MODE_ENV || 'development';
 
@@ -14,6 +16,7 @@ const mongoConnection = require('./config').mongo_connection;
 const express = require('express');
 const morgan = require('morgan');
 const fs = require('fs');
+const ObjectId = require('mongodb').ObjectID;
 
 const RouterBuilder = require('./routes');
 const app = express();
@@ -32,35 +35,59 @@ const io = require('socket.io')(server);
 io.on('connection', function(client) {
     console.log('Client connected !');
 
-    client.on('file_created', function(data)   {
-        fs.writeFile(process.env.FILES_PATH + data.name, data.content, function (err) {
+    client.on('file_created', async function(data)   {
+        const File = await FileController.getById(ObjectId(data.id));
+        console.log('File : ' + File);
+        try {
+            if(!File) {
+                console.log('File ' + data.id + ' doesnt exists');
+                const g = await FileController.create(data.name, Date.now(), 1, data.extension);
+            }
+            else {
+                const g = await FileController.update(ObjectId(data.id), data.name, File.file_version+1, data.extension); //@TODO update file folder too
+            }
+        }
+        catch (err) {
+            console.log(err.toString());
+            return;
+        }
+        fs.writeFile(process.env.FILES_PATH + data.id, data.content, function (err) {
             if (err) throw err;
-            console.log(data.name + ' file created !');
+            console.log(data.id + ' file created !');
         });
     });
 
-    client.on('file_deleted', function (data) {
-        let isFolder = fs.lstatSync(process.env.FILES_PATH + data.name).isDirectory();
-        if(isFolder) {
-            fs.rmdir(process.env.FILES_PATH + data.name, function (err) {
-                if (err) throw err;
-            });
-            console.log(data.name + ' folder deleted !');
+    client.on('file_deleted', async function (data) {
+        try {
+            if (data.isFile) {
+                console.log('ObjectId(data.id) : ' + ObjectId(data.id));
+                const g = await FileController.delete(ObjectId(data.id));
+                fs.unlink(process.env.FILES_PATH + data.id, function (err) {
+                    if (err) throw err;
+                });
+                console.log(data.id + ' file deleted !');
+            } else {
+                const g = await DirectoryController.delete(ObjectId(data.id));
+                console.log(data.id + ' folder deleted !');
+            }
         }
-        else {
-            fs.unlink(process.env.FILES_PATH + data.name, function (err) {
-                if (err) throw err;
-            });
-            console.log(data.name + ' file deleted !');
+        catch (e) {
+            console.log(e.toString());
         }
     });
 
     client.on('folder_created', function(data)   {
-        if(!fs.existsSync(process.env.FILES_PATH + data.name)) {
-            fs.mkdir(process.env.FILES_PATH + data.name, function (err) {
-                if (err) throw err;
-            });
-            console.log(data.name + ' folder created !');
+        const Folder = DirectoryController.getById(ObjectId(data.id));
+        try {
+            if (!Folder) {
+                console.log('Folder ' + data.id + ' doesnt exists');
+                const g = DirectoryController.create(data.name, data.path, Date.now()); //@TODO update user_create, user_update
+            } else {
+                const g = DirectoryController.update(ObjectId(data.id), data.name, data.path);
+            }
+        }
+        catch (e) {
+            console.log(e.toString());
         }
     });
 

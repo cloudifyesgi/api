@@ -37,7 +37,7 @@ router.post('/', async (req, res) => {
         const g = await FileController.create(req.body.name,req.body.path,req.body.date_create,req.body.file_version,req.body.file_type);
         let fileToUpload = req.files.file;
 
-        fileToUpload.mv(process.env.FILES_PATH + g._id + req.body.file_type, function(err) {
+        fileToUpload.mv(process.env.FILES_PATH + g._id, function(err) {
             if (err)
                 return res.status(500).send(err);
             console.log('File uploaded!');
