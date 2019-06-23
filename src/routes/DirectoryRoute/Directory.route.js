@@ -23,9 +23,13 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id/children', async (req, res) => {
     try {
         const parentId = req.params.id;
-        const directories = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
-        res.json(directories);
+        const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
+        const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
+        const result = {children: children, breadcrumb: breadcrumb};
+        res.json(result);
+
     } catch (e) {
+        console.log(e);
         res.status(404).end();
     }
 }).get('/:id/files', async (req, res) => {
