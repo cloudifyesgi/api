@@ -23,9 +23,11 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     const email = req.body.email;
+    const name = req.body.name;
+    const firstname = req.body.firstname;
     const password = req.body.password;
     try {
-        const g = await UserController.create(email,password);
+        const g = await UserController.create(email, name, firstname, password);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();

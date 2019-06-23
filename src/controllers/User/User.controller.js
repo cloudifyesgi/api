@@ -11,9 +11,11 @@ class UserController extends Controller {
         super(User);
     }
 
-    async create(email, password) {
+    async create(email, name, firstname,  password) {
         let newUser = new User({
             email: email,
+            name: name,
+            firstname: firstname,
             password: password
         });
         return await newUser.save();

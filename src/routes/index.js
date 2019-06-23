@@ -4,7 +4,7 @@
 class RouterBuilder {
 
     build(app) {
-        app.use('/', require('./Auth.route'));
+        app.use('/', require('./AuthRoute/Auth.route'));
         app.use('/user', require('./User.route'));
         app.use('/usergroup', require('./UserGroup.route'));
         app.use('/Subscription', require('./SubscriptionRoute/Subscription.route'));

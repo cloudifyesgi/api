@@ -17,16 +17,15 @@ const express = require('express');
 const morgan = require('morgan');
 const fs = require('fs');
 const ObjectId = require('mongodb').ObjectID;
+const cors = require('cors');
 
 const RouterBuilder = require('./routes');
 const app = express();
 // app.use(rollbar.errorHandler());
 const connection = mongoConnection(modeEnv);
 app.use(morgan('dev'));
+app.use(cors());
 
-app.get('/', (req, res, next) => {
-    res.send('Shengapi start !').end();
-});
 
 app.on('close', () => {
     connection.removeAllListeners();
