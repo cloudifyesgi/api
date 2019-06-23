@@ -5,9 +5,6 @@ const FileSchema = new Schema({
     name: {
         type: String
     },
-    path: {
-        type: String
-    },
     date_create: {
         type: Date
     },

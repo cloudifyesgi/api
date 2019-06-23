@@ -2,13 +2,18 @@
 
 const express = require('express');
 const bodyParser = require("body-parser");
+const fileUpload = require('express-fileupload');
+const fileSystem = require('fs');
+const path = require('path');
 const router = express.Router();
 const FileController = require("../../controllers").FileController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
+const HistoryController = require('../../controllers').HistoryController;
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
+router.use(fileUpload());
 
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     const users = await FileController.getAll();
@@ -22,11 +27,25 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     }
 });
 
+
 router.post('/', async (req, res) => {
     try {
+        if(!req.files) {
+            console.log('No file to upload or file empty');
+            return res.status(409).end();
+        }
         const g = await FileController.create(req.body.name,req.body.path,req.body.date_create,req.body.file_version,req.body.file_type);
+        let fileToUpload = req.files.file;
+
+        fileToUpload.mv(process.env.FILES_PATH + g._id, function(err) {
+            if (err)
+                return res.status(500).send(err);
+            console.log('File uploaded!');
+        });
+        const h = await HistoryController.create("upload",req.body.date_create);
         res.status(201).end();
     } catch(err) {
+        console.log(err.toString());
         res.status(409).end();
     }
 });
