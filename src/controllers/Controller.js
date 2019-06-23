@@ -6,8 +6,8 @@ class Controller {
         this.model = model;
     }
 
-    async getAll(options) {
-        return await this.model.find({}, options);
+    async getAll(where) {
+        return await this.model.find(where);
     }
 
     async getById(id) {
