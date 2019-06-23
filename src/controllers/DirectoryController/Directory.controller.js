@@ -43,6 +43,15 @@ class DirectoryController extends Controller{
         id = id === '0' ? null :  mongoose.Types.ObjectId(id);
         return await fileController.getAll({directory: id, user_create: idUser});
     }
+
+    async getTreeDirectory(id) {
+        id = id === '0' || id === undefined ? null :  mongoose.Types.ObjectId(id);
+        if(!id) return [{name: 'Home', _id: '0'}];
+        const directory = await this.getById(id);
+        let res = await this.getTreeDirectory(directory.parent_directory);
+        res.push(directory);
+        return res;
+    }
 }
 
 module.exports = new DirectoryController();
