@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let DirectoryController;
-let Directory;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Directory Controller', () => {
     describe('#create()', () => {
         it('should return new Directory', async () => {
-            const Directory = await DirectoryController.create(/**/);
+            const Directory = await DirectoryController.create('string','string','2019-04-20');
             expect(Directory).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Directory Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Directory', async () => {
-
-            const Directory = await DirectoryController.getById(/**/);
-            expect(Directory).to.not.be.undefined;
+            let test = await DirectoryController.getAll();
+            test = test[0];
+            const Directory = await DirectoryController.getById(test._id);
+            expect(Directory).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Directory = await DirectoryController.getById(/**/);
+            const Directory = await DirectoryController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Directory).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Directory updated', async () => {
+            let test = await DirectoryController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Directory = await DirectoryController.update(/**/, fields);
+            const Directory = await DirectoryController.update(test._id, fields);
             expect(Directory).to.not.be.undefined;
             expect(Directory.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Directory Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Directory = await DirectoryController.update(/**/, fields);
+            const Directory = await DirectoryController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Directory).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Directory Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Directory = await DirectoryController.delete(/**/);
-            expect(Directory).to.be.null;
+            let test = await DirectoryController.getAll();
+            test = test[0];
+            const Directory = await DirectoryController.delete(test._id);
+            expect(Directory).to.not.be.undefined;
         });
     });
 

@@ -14,7 +14,7 @@ class LinkController extends Controller{
         let newLink = new Link({
             link:link,link_type:link_type,expiry_date:expiry_date,is_activated:is_activated,link_password:link_password
         });
-        await newLink.save();
+        return await newLink.save();
     }
 
     async update(id, fields) {

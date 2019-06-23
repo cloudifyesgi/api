@@ -24,7 +24,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await SubscriptionStatusController.create(req.body.name,req.body.storage,req.body.file_number,req.body.file_size,req.body.price,req.body.description,req.body.directory_number,req.body.update_date,req.body.update_type,req.body.subscription_id);
+        const g = await SubscriptionStatusController.create(req.body.name,req.body.storage,req.body.file_number,req.body.file_size,req.body.price,req.body.description,req.body.directory_number,req.body.update_date,req.body.update_type);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();

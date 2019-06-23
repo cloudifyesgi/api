@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let RightController;
-let Right;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Right Controller', () => {
     describe('#create()', () => {
         it('should return new Right', async () => {
-            const Right = await RightController.create(/**/);
+            const Right = await RightController.create(true,true);
             expect(Right).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Right Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Right', async () => {
-
-            const Right = await RightController.getById(/**/);
-            expect(Right).to.not.be.undefined;
+            let test = await RightController.getAll();
+            test = test[0];
+            const Right = await RightController.getById(test._id);
+            expect(Right).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Right = await RightController.getById(/**/);
+            const Right = await RightController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Right).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Right updated', async () => {
+            let test = await RightController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Right = await RightController.update(/**/, fields);
+            const Right = await RightController.update(test._id, fields);
             expect(Right).to.not.be.undefined;
             expect(Right.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Right Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Right = await RightController.update(/**/, fields);
+            const Right = await RightController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Right).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Right Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Right = await RightController.delete(/**/);
-            expect(Right).to.be.null;
+            let test = await RightController.getAll();
+            test = test[0];
+            const Right = await RightController.delete(test._id);
+            expect(Right).to.not.be.undefined;
         });
     });
 

@@ -14,7 +14,7 @@ class FileController extends Controller{
         let newFile = new File({
             name:name,path:path,date_create:date_create,file_version:file_version,file_type:file_type
         });
-        await newFile.save();
+        return await newFile.save();
     }
 
     async update(id, fields) {

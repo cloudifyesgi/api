@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let SubscriptionStatusController;
-let SubscriptionStatus;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('SubscriptionStatus Controller', () => {
     describe('#create()', () => {
         it('should return new SubscriptionStatus', async () => {
-            const SubscriptionStatus = await SubscriptionStatusController.create(/**/);
+            const SubscriptionStatus = await SubscriptionStatusController.create('string',67,67,67,67,'string',67,'2019-04-20',67);
             expect(SubscriptionStatus).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('SubscriptionStatus Controller', () => {
 
     describe('#getById()', () => {
         it('should return an SubscriptionStatus', async () => {
-
-            const SubscriptionStatus = await SubscriptionStatusController.getById(/**/);
-            expect(SubscriptionStatus).to.not.be.undefined;
+            let test = await SubscriptionStatusController.getAll();
+            test = test[0];
+            const SubscriptionStatus = await SubscriptionStatusController.getById(test._id);
+            expect(SubscriptionStatus).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const SubscriptionStatus = await SubscriptionStatusController.getById(/**/);
+            const SubscriptionStatus = await SubscriptionStatusController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(SubscriptionStatus).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return SubscriptionStatus updated', async () => {
+            let test = await SubscriptionStatusController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const SubscriptionStatus = await SubscriptionStatusController.update(/**/, fields);
+            const SubscriptionStatus = await SubscriptionStatusController.update(test._id, fields);
             expect(SubscriptionStatus).to.not.be.undefined;
             expect(SubscriptionStatus.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('SubscriptionStatus Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const SubscriptionStatus = await SubscriptionStatusController.update(/**/, fields);
+            const SubscriptionStatus = await SubscriptionStatusController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(SubscriptionStatus).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('SubscriptionStatus Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const SubscriptionStatus = await SubscriptionStatusController.delete(/**/);
-            expect(SubscriptionStatus).to.be.null;
+            let test = await SubscriptionStatusController.getAll();
+            test = test[0];
+            const SubscriptionStatus = await SubscriptionStatusController.delete(test._id);
+            expect(SubscriptionStatus).to.not.be.undefined;
         });
     });
 

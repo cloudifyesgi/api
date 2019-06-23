@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let FileController;
-let File;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('File Controller', () => {
     describe('#create()', () => {
         it('should return new File', async () => {
-            const File = await FileController.create(/**/);
+            const File = await FileController.create('string','string','2019-04-20','string','string');
             expect(File).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('File Controller', () => {
 
     describe('#getById()', () => {
         it('should return an File', async () => {
-
-            const File = await FileController.getById(/**/);
-            expect(File).to.not.be.undefined;
+            let test = await FileController.getAll();
+            test = test[0];
+            const File = await FileController.getById(test._id);
+            expect(File).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const File = await FileController.getById(/**/);
+            const File = await FileController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(File).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return File updated', async () => {
+            let test = await FileController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const File = await FileController.update(/**/, fields);
+            const File = await FileController.update(test._id, fields);
             expect(File).to.not.be.undefined;
             expect(File.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('File Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const File = await FileController.update(/**/, fields);
+            const File = await FileController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(File).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('File Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const File = await FileController.delete(/**/);
-            expect(File).to.be.null;
+            let test = await FileController.getAll();
+            test = test[0];
+            const File = await FileController.delete(test._id);
+            expect(File).to.not.be.undefined;
         });
     });
 
