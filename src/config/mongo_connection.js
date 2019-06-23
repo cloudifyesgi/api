@@ -2,7 +2,6 @@
 
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-require('events').EventEmitter.defaultMaxListeners = 50;
 dotenv.config();
 
 mongoose.Promise = global.Promise;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+mongoose.connection.setMaxListeners(50);
 const DirectorySchema = new Schema({
     name: {
         type: String
