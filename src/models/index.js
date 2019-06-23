@@ -13,5 +13,4 @@ module.exports = {
     Link: require('./Link'),
     Directory: require('./Directory'),
     Synchronization: require('./Synchronization'),
-    Subscription: require('./Subscription'),
 };

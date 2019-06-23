@@ -3,6 +3,7 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const Directory = models.Directory;
+const fileController = require('../FileController/File.controller');
 const mongoose = require('mongoose');
 
 class DirectoryController extends Controller{
@@ -33,6 +34,15 @@ class DirectoryController extends Controller{
         return await super.delete(Directory);
     }
 
+    async getDirectoryByParent(parentId, idUser) {
+        parentId = parentId === '0' ? null :  mongoose.Types.ObjectId(parentId);
+        return await this.model.find({parent_directory: parentId, user_create: idUser});
+    }
+
+    async getFilesByDirectory(id, idUser) {
+        id = id === '0' ? null :  mongoose.Types.ObjectId(id);
+        return await fileController.getAll({directory: id, user_create: idUser});
+    }
 }
 
 module.exports = new DirectoryController();

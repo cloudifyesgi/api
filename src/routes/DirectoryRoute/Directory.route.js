@@ -11,14 +11,31 @@ router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
 router.get('/', UserController.checkLevel(1), async (req, res) => {
-    const users = await DirectoryController.getAll();
-    res.json(users);
+    const directories = await DirectoryController.getAll();
+    res.json(directories);
 }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
-        const Directories = await DirectoryController.getById(req.params.id);
-        res.json(Directories);
+        const directories = await DirectoryController.getById(req.params.id);
+        res.json(directories);
     } catch (e) {
         res.status(409).end();
+    }
+}).get('/:id/children', async (req, res) => {
+    try {
+        const parentId = req.params.id;
+        const directories = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
+        res.json(directories);
+    } catch (e) {
+        res.status(404).end();
+    }
+}).get('/:id/files', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const files = await DirectoryController.getFilesByDirectory(id, req.user.id);
+        res.json(files);
+    } catch (e) {
+        console.log(e);
+        res.status(404).end();
     }
 });
 

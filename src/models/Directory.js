@@ -25,6 +25,7 @@ const DirectorySchema = new Schema({
         ref: 'Directory'
     }
 }, {
+    timestamps: true,
     autoCreate: true,
     collection: 'Directory'
 });
