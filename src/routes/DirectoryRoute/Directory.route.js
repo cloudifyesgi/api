@@ -16,7 +16,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
         const directories = await DirectoryController.getById(req.params.id);
-        res.json(directories);
+        res.json(directories).status(200).end();
     } catch (e) {
         res.status(409).end();
     }
@@ -26,7 +26,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
         const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
         const result = {children: children, breadcrumb: breadcrumb};
-        res.json(result);
+        res.json(result).status(200).end();
 
     } catch (e) {
         console.log(e);
@@ -36,7 +36,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const id = req.params.id;
         const files = await DirectoryController.getFilesByDirectory(id, req.user.id);
-        res.json(files);
+        res.json(files).status(200).end();
     } catch (e) {
         console.log(e);
         res.status(404).end();
@@ -45,38 +45,39 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await DirectoryController.create(req.body.name,req.body.path,req.body.date_create,req.user._id,req.user._id,req.body.parent_directory);
+        const g = await DirectoryController.create(req.body.name, req.user._id, req.body.parent_directory);
+        console.log(g);
         res.status(201).end();
-    } catch(err) {
+    } catch (err) {
         res.status(409).end();
     }
 });
 
 router.put('/', async (req, res) => {
     const id = req.body.id;
-    if(id === undefined){
+    if (id === undefined) {
         return res.status(400).end();
     }
 
     try {
         const g = await DirectoryController.update(id, req.body);
 
-        if(g === null || g === undefined) res.status(204).end();
+        if (g === null || g === undefined) res.status(204).end();
         else res.status(200).end();
-    } catch(err) {
+    } catch (err) {
         res.status(400).end();
     }
 });
 
 router.delete('/', async (req, res) => {
     const id = req.body.id;
-    if(id === undefined) {
+    if (id === undefined) {
         return res.status(400).end();
     }
     try {
         const g = await DirectoryController.delete(id);
         res.status(200).end();
-    } catch(err) {
+    } catch (err) {
         res.status(409).end();
     }
 });
