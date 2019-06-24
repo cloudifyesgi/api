@@ -22,7 +22,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
         //const Files = await FileController.getById(req.params.id);
-        const filePath = path.join(process.env.FILES_PATH + "5cfd3075af0f39191cdbc438");
+        const filePath = path.join(process.env.FILES_PATH + req.params.id);
         const stat = fileSystem.statSync(filePath);
 
         res.writeHead(200, {

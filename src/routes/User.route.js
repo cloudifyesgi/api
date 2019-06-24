@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
         const g = await UserController.create(email, name, firstname, password);
         res.status(201).end();
     } catch(err) {
+        console.log(err.toString());
         res.status(409).end();
     }
 });
