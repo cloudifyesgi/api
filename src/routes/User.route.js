@@ -12,8 +12,9 @@ router.use(AuthController.authenticate());
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     const users = await UserController.getAll('-password');
     res.json(users);
-}).get('/:email', UserController.checkLevel(1), async (req, res) => {
+}).get('/:email', async (req, res) => {
     try {
+        console.log(req.params);
         const users = await UserController.getByEmail(req.params.email);
         res.json(users);
     } catch (e) {
