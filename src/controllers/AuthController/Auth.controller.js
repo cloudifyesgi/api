@@ -27,7 +27,6 @@ class AuthController {
                 // return the information including token as JSON
                 return {success: true, message: token, user: user};
             } else {
-                console.log('test');
                 return {success: false, message: "authentication failed"};
             }
         }
@@ -50,7 +49,6 @@ class AuthController {
                     if (info.name === "TokenExpiredError") {
                         return res.status(401).json({success: false, expired: true, message: "Your token has expired." });
                     } else {
-                        console.log('hey');
                         return res.status(401).json({success: false, expired: false,  message: info.message });
                     }
                 }
