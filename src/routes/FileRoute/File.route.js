@@ -34,7 +34,7 @@ router.post('/', async (req, res) => {
             console.log('No file to upload or file empty');
             return res.status(409).end();
         }
-        const g = await FileController.create(req.body.name,req.body.path,req.body.date_create,req.body.file_version,req.body.file_type);
+        const g = await FileController.create(req.body.name,req.body.date_create,req.body.file_version,req.body.file_type,req.body.user_create,req.body.user_update,req.body.directory);
         let fileToUpload = req.files.file;
         if(!fileToUpload) {
             console.log('Error while uploading the file');
@@ -70,8 +70,8 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
-    const id = req.body.id;
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
     if(id === undefined) {
         return res.status(400).end();
     }

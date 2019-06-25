@@ -10,9 +10,9 @@ class FileController extends Controller{
         super(File);
     }
 
-    async create(name,date_create,file_version,file_type) {
+    async create(name,date_create,file_version,file_type,user_create,user_update,directory) {
         let newFile = new File({
-            name:name,date_create:date_create,file_version:file_version,file_type:file_type
+            name:name,date_create:date_create,file_version:file_version,file_type:file_type,user_create:user_create,user_update:user_update,directory:directory
         });
         return await newFile.save();
     }
