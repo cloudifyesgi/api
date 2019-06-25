@@ -5,9 +5,6 @@ const HistorySchema = new Schema({
     action: {
         type: String
     },
-    date: {
-        type: Date
-    },
     file: {
         type:Schema.Types.ObjectId,
         ref:'File'
@@ -16,11 +13,16 @@ const HistorySchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'Directory'
     },
+    parent: {
+        type:Schema.Types.ObjectId,
+        ref:'Directory'
+    },
     user: {
         type:Schema.Types.ObjectId,
         ref:'User'
     }
 }, {
+    timestamps: true,
     autoCreate: true,
     collection: 'History'
 });

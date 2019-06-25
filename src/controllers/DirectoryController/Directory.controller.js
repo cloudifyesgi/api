@@ -13,6 +13,7 @@ class DirectoryController extends Controller {
     }
 
     async create(name, user_create, parent_directory) {
+        parent_directory = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
         let newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),

@@ -6,6 +6,7 @@ const router = express.Router();
 const DirectoryController = require("../../controllers").DirectoryController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
+const HistoryController = require('../../controllers').HistoryController;
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
@@ -24,6 +25,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
+        console.log(req.user.id);
         const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
@@ -46,9 +48,16 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const g = await DirectoryController.create(req.body.name, req.user._id, req.body.parent_directory);
-        console.log(g);
-        res.status(201).end();
+        if(g) {
+            HistoryController.create('create', req.body.parent_directory, g._id, null, req.user.id);
+            console.log(g);
+            res.status(201).end();
+        } else {
+            res.status(500).end();
+        }
+
     } catch (err) {
+        console.log(err);
         res.status(409).end();
     }
 });
