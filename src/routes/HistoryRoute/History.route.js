@@ -15,8 +15,8 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     res.json(users);
 }).get('/:id', UserController.checkLevel(1), async (req, res) => {
     try {
-        const Historys = await HistoryController.getById(req.params.id);
-        res.json(Historys);
+        const Histories = await HistoryController.getById(req.params.id);
+        res.json(Histories);
     } catch (e) {
         res.status(409).end();
     }
@@ -24,7 +24,8 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await HistoryController.create(req.body.action,req.body.date);
+
+        const g = await HistoryController.create(req.body.action, req.body.directory, req.body.file, req.user.id);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();

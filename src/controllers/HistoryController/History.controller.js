@@ -1,18 +1,25 @@
 'use strict';
-
-const models = require('../../models');
+const mongoose = require('mongoose');
+const models     = require('../../models');
 const Controller = require('../Controller');
-const History = models.History;
+const History    = models.History;
 
-class HistoryController extends Controller{
+class HistoryController extends Controller {
 
     constructor() {
         super(History);
     }
 
-    async create(action,date) {
+    async create(action, parent, directory, file, user) {
+        directory = directory ? mongoose.Types.ObjectId(directory) : null;
+        file = file ? mongoose.Types.ObjectId(file) : null;
+        parent = parent === '0' ? null : mongoose.Types.ObjectId(parent);
         let newHistory = new History({
-            action:action,date:date
+            action: action,
+            directory: directory,
+            parent: parent,
+            file: file,
+            user: user
         });
         return await newHistory.save();
     }
