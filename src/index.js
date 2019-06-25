@@ -2,8 +2,10 @@
 
 const FileController = require("./controllers").FileController;
 const DirectoryController = require("./controllers").DirectoryController;
+const socketIo = require("./config/socket.io");
 require('dotenv').config();
 const modeEnv = process.env.MODE_ENV || 'development';
+const cloudifySocket = require("./sockets");
 
 // const Rollbar = require("rollbar");
 // const rollbar = new Rollbar({
@@ -25,7 +27,7 @@ const app = express();
 const connection = mongoConnection(modeEnv);
 app.use(morgan('dev'));
 app.use(cors());
-
+cloudifySocket(3000);
 
 app.on('close', () => {
     connection.removeAllListeners();
@@ -33,7 +35,7 @@ app.on('close', () => {
 
 RouterBuilder.build(app);
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+/*const io = socketIo(server);
 
 io.on('connection', function(client) {
     console.log('Client connected !');
@@ -94,7 +96,7 @@ io.on('connection', function(client) {
         }
     });
 
-});
+});*/
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => console.log(`Listening on ${port} ....`));
