@@ -1,19 +1,33 @@
+'use strict';
+
 const Io = require('socket.io');
 
 const bindEvent = require("./../helpers/socket").bindEvent;
-const messageHandlers =  require( "./File.socket");
+const handlers  = require('./routes');
 
-const handlers = Object.values({
-    ...messageHandlers
-});
+class CloudifySocket {
 
-console.log(handlers);
-module.exports = (listener) => {
-    const io = Io.listen(listener);
+    constructor() {
+        this.clientConnected = [];
+    }
 
-    io.on("connection", (socket) => {
-        handlers.forEach((handler) => {
-            bindEvent(socket, handler);
+    static get() {
+        if(!CloudifySocket.socket) {
+            CloudifySocket.socket = new CloudifySocket();
+        }
+        return CloudifySocket.socket;
+    }
+    run(listener) {
+        const io = Io.listen(listener);
+        console.log("socket.io listening on " + listener);
+        io.on("connection", (socket) => {
+            console.log('connected user');
+            this.clientConnected.push(socket);
+            handlers.forEach((handler) => {
+                bindEvent(socket, handler);
+            });
         });
-    });
-};
+    };
+}
+
+module.exports = CloudifySocket;
