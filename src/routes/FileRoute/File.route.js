@@ -34,7 +34,16 @@ router.post('/', async (req, res) => {
             console.log('No file to upload or file empty');
             return res.status(409).end();
         }
-        const g = await FileController.create(req.body.name,req.body.date_create,req.body.file_version,req.body.file_type,req.body.user_create,req.body.user_update,req.body.directory);
+        let g = null;
+        const isFirstVersion = await FileController.isFirstVersion(req.body.name, req.body.directory);
+        if(isFirstVersion) {
+            g = await FileController.create(req.body.name,req.body.date_create,1,req.body.file_type,req.body.user_create,req.body.user_update,req.body.directory);
+        }
+        else {
+            const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
+            g = await FileController.create(req.body.name,req.body.date_create,parseInt(lastVersion, 10)+1,req.body.file_type,req.body.user_create,req.body.user_update,req.body.directory);
+        }
+
         let fileToUpload = req.files.file;
         if(!fileToUpload) {
             console.log('Error while uploading the file');
@@ -46,7 +55,7 @@ router.post('/', async (req, res) => {
                 return res.status(500).send(err);
             console.log('File uploaded!');
         });
-        const h = await HistoryController.create("upload",req.body.date_create);
+        // const h = await HistoryController.create("upload",req.body.date_create);
         res.status(201).end();
     } catch(err) {
         console.log(err.toString());

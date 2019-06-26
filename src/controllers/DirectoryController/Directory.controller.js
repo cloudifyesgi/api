@@ -5,6 +5,7 @@ const Controller = require('../Controller');
 const Directory = models.Directory;
 const fileController = require('../FileController/File.controller');
 const mongoose = require('mongoose');
+const File = models.File;
 
 class DirectoryController extends Controller {
 
@@ -40,7 +41,19 @@ class DirectoryController extends Controller {
 
     async getFilesByDirectory(id, idUser) {
         id = id === '0' ? null : mongoose.Types.ObjectId(id);
-        return await fileController.getAll({directory: id, user_create: idUser});
+        return await File.aggregate( [ { $group: {
+                _id: "$name",
+                id : { $first: '$_id' },
+                name : { $first: '$name' },
+                date_create : { $first: '$date_create' },
+                file_version: { $max: "$file_version"},
+                file_type : { $first: '$file_type' },
+                user_create : { $first: '$user_create' },
+                user_update : { $first: '$user_update' },
+                directory : { $first: '$directory' },
+            }} ] );
+        return await File.find( {directory: id, user_create: idUser} ).sort( {file_version: -1} );
+        // return await fileController.getAll({directory: id, user_create: idUser});
     }
 
     async getTreeDirectory(id) {

@@ -9,7 +9,7 @@ const FileSchema = new Schema({
         type: Date
     },
     file_version: {
-        type: String
+        type: Number
     },
     file_type: {
         type: String

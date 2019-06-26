@@ -27,6 +27,21 @@ class FileController extends Controller{
         return await super.delete(File);
     }
 
+    async isFirstVersion(name, directory) {
+        let exists = await File.find( { name: name, directory: directory} );
+        return exists[0] === undefined;
+    }
+
+    async getLastVersion(name, directory) {
+        let lastVersion = await File.find().sort({ file_version: -1}).limit(1);
+        if(lastVersion[0] === undefined) {
+            return 0;
+        }
+        else {
+            return lastVersion[0].file_version;
+        }
+    }
+
 }
 
 module.exports = new FileController();
