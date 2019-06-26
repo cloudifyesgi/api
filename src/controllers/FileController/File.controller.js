@@ -4,6 +4,7 @@ const models = require('../../models');
 const Controller = require('../Controller');
 const File = models.File;
 const ObjectId = require('mongodb').ObjectID;
+const fs = require('fs');
 
 class FileController extends Controller{
 
@@ -50,8 +51,10 @@ class FileController extends Controller{
     async getVersion(name, number) {
         let file =  await File.findOne( { name: name, file_version: number} );
         const lastVersion = await this.getLastVersion(name, file.directory);
+        let original_id = file._id;
         file.file_version = lastVersion + 1;
         file._id = new ObjectId();
+        fs.createReadStream(process.env.FILES_PATH + original_id).pipe(fs.createWriteStream(process.env.FILES_PATH + file._id));
         return await File.insertMany(file);
     }
 }
