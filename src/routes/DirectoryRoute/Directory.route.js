@@ -25,7 +25,6 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
-        console.log(req.user.id);
         const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();

@@ -25,6 +25,23 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/:name/versions', async (req, res) => {
+    try {
+        const files = await FileController.getAllVersions(req.params.name);
+        res.json(files);
+    }
+    catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/version/:name/:number', async (req, res) => {
+    try {
+        const file = await FileController.getVersion(req.params.name, req.params.number);
+        res.json(file);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
 });
 
 
@@ -86,6 +103,7 @@ router.delete('/:id', async (req, res) => {
     }
     try {
         const g = await FileController.delete(id);
+        const h = await HistoryController.create('deletion', null, null, id, null);
         res.status(200).end();
     } catch(err) {
         res.status(409).end();

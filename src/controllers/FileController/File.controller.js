@@ -3,6 +3,7 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const File = models.File;
+const ObjectId = require('mongodb').ObjectID;
 
 class FileController extends Controller{
 
@@ -33,7 +34,7 @@ class FileController extends Controller{
     }
 
     async getLastVersion(name, directory) {
-        let lastVersion = await File.find().sort({ file_version: -1}).limit(1);
+        let lastVersion = await File.find( { name: name, directory: directory} ).sort({ file_version: -1}).limit(1);
         if(lastVersion[0] === undefined) {
             return 0;
         }
@@ -42,6 +43,17 @@ class FileController extends Controller{
         }
     }
 
+    async getAllVersions(name) {
+        return await File.find( { name: name} ).sort( {file_version: 1} );
+    }
+
+    async getVersion(name, number) {
+        let file =  await File.findOne( { name: name, file_version: number} );
+        const lastVersion = await this.getLastVersion(name, file.directory);
+        file.file_version = lastVersion + 1;
+        file._id = new ObjectId();
+        return await File.insertMany(file);
+    }
 }
 
 module.exports = new FileController();
