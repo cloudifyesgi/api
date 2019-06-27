@@ -41,18 +41,22 @@ class DirectoryController extends Controller {
 
     async getFilesByDirectory(id, idUser) {
         id = id === '0' ? null : mongoose.Types.ObjectId(id);
-        return await File.aggregate( [ { $group: {
+        return await File.aggregate( [
+            {$match: { directory: id}},
+            {$sort: {"file_version": -1}},
+            {$group: {
                 _id: "$name",
-                id : { $first: '$_id' },
-                name : { $first: '$name' },
-                date_create : { $first: '$date_create' },
-                file_version: { $max: "$file_version"},
-                file_type : { $first: '$file_type' },
-                user_create : { $first: '$user_create' },
-                user_update : { $first: '$user_update' },
-                directory : { $first: '$directory' },
-            }} ] );
-        return await File.find( {directory: id, user_create: idUser} ).sort( {file_version: -1} );
+                name: {$first: "$name"},
+                file_version: {$first: "$file_version"},
+                file_id: {$first: "$_id"},
+                date_create: {$first: "$date_create"},
+                file_type: {$first: "$file_type"},
+                user_create: {$first: "$user_create"},
+                user_update: {$first: "$user_update"},
+                directory: {$first: "$directory"},
+            }}
+        ]);
+        // return await File.find( {directory: id, user_create: idUser} ).sort( {file_version: -1} );
         // return await fileController.getAll({directory: id, user_create: idUser});
     }
 
