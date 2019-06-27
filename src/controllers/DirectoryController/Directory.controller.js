@@ -14,11 +14,11 @@ class DirectoryController extends Controller {
 
     async create(name, user_create, parent_directory) {
         parent_directory = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
-        let newDirectory = new Directory({
+        const newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
             user_update: mongoose.Types.ObjectId(user_create),
-            parent_directory: parent_directory !== undefined ? mongoose.Types.ObjectId(parent_directory) : undefined,
+            parent_directory: parent_directory,
         });
         return await newDirectory.save();
     }
@@ -44,8 +44,10 @@ class DirectoryController extends Controller {
     }
 
     async getTreeDirectory(id) {
-        id = id === '0' || id === undefined ? null : mongoose.Types.ObjectId(id);
+        console.log(id);
+        id = id === '0' || id === undefined || id === null ? null : mongoose.Types.ObjectId(id);
         if (!id) return [{name: 'Home', _id: '0'}];
+        console.log(id);
         const directory = await this.getById(id);
         let res = await this.getTreeDirectory(directory.parent_directory);
         res.push(directory);

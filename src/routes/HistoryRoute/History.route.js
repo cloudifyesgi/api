@@ -20,6 +20,13 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/:id/directories', UserController.checkLevel(1), async (req, res) => {
+    try {
+        const Histories = await HistoryController.getByDirectories(req.params.id);
+        res.json(Histories);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
