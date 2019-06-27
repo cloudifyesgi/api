@@ -18,7 +18,7 @@ class CloudifySocket {
         return CloudifySocket.socket;
     }
     run(listener) {
-        const io = Io.listen(listener);
+        const io = Io(listener);
         console.log("socket.io listening on " + listener);
         io.on("connection", (socket) => {
             console.log('connected user');

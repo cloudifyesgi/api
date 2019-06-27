@@ -14,8 +14,8 @@ const app = express();
 const connection = mongoConnection(modeEnv);
 app.use(morgan('dev'));
 app.use(cors());
-
-cloudifySocket.run(3000);
+const server = require('http').createServer(app);
+cloudifySocket.run(server);
 
 setInterval(() => {
     cloudifySocket.clientConnected.forEach((client) => {
@@ -30,4 +30,4 @@ app.on('close', () => {
 RouterBuilder.build(app);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on ${port} ....`));
+server.listen(port, () => console.log(`Listening on ${port} ....`));
