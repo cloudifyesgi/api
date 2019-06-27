@@ -20,6 +20,15 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/file/:id', async (req, res) => {
+    try {
+        const FileHistory = await HistoryController.getByFile(req.params.id);
+        res.json(FileHistory);
+    }
+    catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {

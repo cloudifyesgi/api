@@ -14,9 +14,15 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     res.json(users);
 }).get('/:email', async (req, res) => {
     try {
-        console.log(req.params);
         const users = await UserController.getByEmail(req.params.email);
         res.json(users);
+    } catch (e) {
+        res.status(409).end();
+    }
+}).get('/name/:id', async (req, res) => {
+    try {
+        const user = await UserController.getById(req.params.id);
+        res.json(user);
     } catch (e) {
         res.status(409).end();
     }

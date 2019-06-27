@@ -34,6 +34,9 @@ class HistoryController extends Controller {
         return await super.delete(History);
     }
 
+    async getByFile(file_id) {
+        return await History.find({file: file_id});
+    }
 }
 
 module.exports = new HistoryController();
