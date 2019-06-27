@@ -45,15 +45,25 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
         console.log(e);
         res.status(404).end();
     }
+}).get('/:id/histories', UserController.checkLevel(1), async (req, res) => {
+    try {
+        const histories = await HistoryController.getByDirectories(req.params.id);
+        console.log(histories);
+        res.json(histories);
+    } catch (e) {
+        console.log(e);
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
     try {
         const g = await DirectoryController.create(req.body.name, req.user._id, req.body.parent_directory);
         if(g) {
-            HistoryController.create('create', req.body.parent_directory, g._id, null, req.user.id);
+            HistoryController.create('created', g._id, null, null, null, req.user.id);
+            HistoryController.create('addedDir', req.body.parent_directory, null, g._id, null, req.user.id);
             console.log(g);
-            res.status(201).end();
+            res.json(g).status(201).end();
         } else {
             res.status(500).end();
         }

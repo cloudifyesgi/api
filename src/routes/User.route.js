@@ -26,6 +26,14 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/id/:id', async (req, res) => {
+    try {
+        console.log(req.params);
+        const users = await UserController.getById(req.params.id);
+        res.json(users);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
