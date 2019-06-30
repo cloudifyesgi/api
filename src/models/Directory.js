@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
+mongoose.connection.setMaxListeners(50);
 const DirectorySchema = new Schema({
     name: {
-        type: String
-    },
-    path: {
         type: String
     },
     date_create: {
@@ -24,6 +23,7 @@ const DirectorySchema = new Schema({
         ref: 'Directory'
     }
 }, {
+    timestamps: true,
     autoCreate: true,
     collection: 'Directory'
 });
@@ -34,6 +34,7 @@ class DirectoryClass {
 }
 
 DirectorySchema.loadClass(DirectoryClass);
+DirectorySchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true, overrideMethods: true });
 const Directory = mongoose.model('Directory', DirectorySchema);
 
 module.exports = Directory;

@@ -10,11 +10,18 @@ class LinkController extends Controller{
         super(Link);
     }
 
-    async create(link,link_type,expiry_date,is_activated,link_password) {
+    async create(link,link_type,expiry_date,is_activated,link_password,user,directory,file) {
         let newLink = new Link({
-            link:link,link_type:link_type,expiry_date:expiry_date,is_activated:is_activated,link_password:link_password
+            link:link,
+            link_type:link_type,
+            expiry_date:expiry_date,
+            is_activated:is_activated,
+            link_password:link_password,
+            user:user,
+            directory:directory,
+            file:file
         });
-        await newLink.save();
+        return await newLink.save();
     }
 
     async update(id, fields) {
@@ -27,6 +34,16 @@ class LinkController extends Controller{
         return await super.delete(Link);
     }
 
+    async getByFileId(id) {
+        let link = await Link.findOne({file: id});
+        return link;
+
+    }
+
+    async getByDirId(id) {
+        let link = await Link.findOne({directory: id});
+        return link;
+    }
 }
 
 module.exports = new LinkController();

@@ -4,7 +4,7 @@
 class RouterBuilder {
 
     build(app) {
-        app.use('/', require('./Auth.route'));
+        app.use('/', require('./AuthRoute/Auth.route'));
         app.use('/user', require('./User.route'));
         app.use('/usergroup', require('./UserGroup.route'));
         app.use('/Subscription', require('./SubscriptionRoute/Subscription.route'));
@@ -16,6 +16,7 @@ class RouterBuilder {
         app.use('/Link', require('./LinkRoute/Link.route'));
         app.use('/Directory', require('./DirectoryRoute/Directory.route'));
         app.use('/Synchronization', require('./SynchronizationRoute/Synchronization.route'));
+        app.use('/Download', require('./DownloadRoute/Download.route'));
     }
 
 }

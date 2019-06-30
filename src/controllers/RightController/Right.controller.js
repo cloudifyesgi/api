@@ -14,7 +14,7 @@ class RightController extends Controller{
         let newRight = new Right({
             view_right:view_right,update_right:update_right
         });
-        await newRight.save();
+        return await newRight.save();
     }
 
     async update(id, fields) {

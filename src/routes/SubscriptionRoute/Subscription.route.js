@@ -27,7 +27,6 @@ router.post('/', async (req, res) => {
         const g = await SubscriptionController.create(req.body.name,req.body.storage,req.body.file_number,req.body.file_size,req.body.price,req.body.description,req.body.directory_number,req.body.status);
         res.status(201).end();
     } catch(err) {
-        console.log(err);
         res.status(409).end();
     }
 });

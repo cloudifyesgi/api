@@ -3,6 +3,8 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const Synchronization = models.Synchronization;
+const directoryController = require('../DirectoryController/Directory.controller');
+const mongoose = require('mongoose');
 
 class SynchronizationController extends Controller{
 
@@ -10,11 +12,13 @@ class SynchronizationController extends Controller{
         super(Synchronization);
     }
 
-    async create(local_path) {
+    async create(local_path,directory,user_id) {
         let newSynchronization = new Synchronization({
-            local_path:local_path
+            local_path:local_path,
+            directory: mongoose.Types.ObjectId(directory),
+            user: mongoose.Types.ObjectId(user_id)
         });
-        await newSynchronization.save();
+        return await newSynchronization.save();
     }
 
     async update(id, fields) {
@@ -27,6 +31,42 @@ class SynchronizationController extends Controller{
         return await super.delete(Synchronization);
     }
 
+    async getByDirectory(directory){
+        return await Synchronization.find({directory: mongoose.Types.ObjectId(directory)});
+    }
+
+    async getByDirectoryAndUser(directory,user){
+        return await Synchronization.find({
+            directory: mongoose.Types.ObjectId(directory),
+            user: mongoose.Types.ObjectId(user)
+        });
+    }
+
+    async getByUser(user){
+        return await Synchronization.find({
+            user: mongoose.Types.ObjectId(user)
+        });
+    }
+
+    async getSyncFolderMapById(id){
+        let sync = await super.getById(id);
+        let directory = await directoryController.getById(sync.directory);
+        let array = {};
+        array[sync.local_path] = {id:directory._id,parent_id : 0, is_directory: true};
+        return await this.getSyncFolder(array,sync.local_path,sync.directory);
+    }
+
+    async getSyncFolder(array,path,root){
+        for(let directory of await directoryController.getByParentIdNoUser(root)){
+            array = await this.getSyncFolder(array,path+'\\'+directory.name,directory._id);
+            array[path+'\\'+directory.name ] = {id : directory._id , parent_id : root,is_directory : true};
+        }
+
+        for(let file of await directoryController.getFilesByDirectoryNoUser(root)){
+            array[path+'\\'+file.name ] = {id : file._id , parent_id : root,is_directory : false};
+        }
+        return array;
+    }
 }
 
 module.exports = new SynchronizationController();

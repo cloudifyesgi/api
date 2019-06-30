@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let TransactionController;
-let Transaction;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('Transaction Controller', () => {
     describe('#create()', () => {
         it('should return new Transaction', async () => {
-            const Transaction = await TransactionController.create(/**/);
+            const Transaction = await TransactionController.create('2019-04-20','string','string','string','string',67);
             expect(Transaction).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('Transaction Controller', () => {
 
     describe('#getById()', () => {
         it('should return an Transaction', async () => {
-
-            const Transaction = await TransactionController.getById(/**/);
-            expect(Transaction).to.not.be.undefined;
+            let test = await TransactionController.getAll();
+            test = test[0];
+            const Transaction = await TransactionController.getById(test._id);
+            expect(Transaction).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const Transaction = await TransactionController.getById(/**/);
+            const Transaction = await TransactionController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(Transaction).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return Transaction updated', async () => {
+            let test = await TransactionController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const Transaction = await TransactionController.update(/**/, fields);
+            const Transaction = await TransactionController.update(test._id, fields);
             expect(Transaction).to.not.be.undefined;
             expect(Transaction.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('Transaction Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const Transaction = await TransactionController.update(/**/, fields);
+            const Transaction = await TransactionController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(Transaction).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('Transaction Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const Transaction = await TransactionController.delete(/**/);
-            expect(Transaction).to.be.null;
+            let test = await TransactionController.getAll();
+            test = test[0];
+            const Transaction = await TransactionController.delete(test._id);
+            expect(Transaction).to.not.be.undefined;
         });
     });
 

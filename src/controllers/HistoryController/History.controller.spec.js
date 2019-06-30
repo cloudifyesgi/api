@@ -7,7 +7,6 @@ const logger = require('../../utils').Logger;
 
 dotenv.config();
 let HistoryController;
-let History;
 
 const expect = require('chai').expect;
 
@@ -21,9 +20,8 @@ before(async function() {
 describe('History Controller', () => {
     describe('#create()', () => {
         it('should return new History', async () => {
-            const History = await HistoryController.create(/**/);
+            const History = await HistoryController.create('string','2019-04-20');
             expect(History).to.not.be.undefined;
-
         });
     });
     describe('#getAll()', () => {
@@ -36,23 +34,26 @@ describe('History Controller', () => {
 
     describe('#getById()', () => {
         it('should return an History', async () => {
-
-            const History = await HistoryController.getById(/**/);
-            expect(History).to.not.be.undefined;
+            let test = await HistoryController.getAll();
+            test = test[0];
+            const History = await HistoryController.getById(test._id);
+            expect(History).to.not.be.null;
         });
 
         it('should return undefined', async () => {
-            const History = await HistoryController.getById(/**/);
+            const History = await HistoryController.getById(mongoose.Types.ObjectId('111111111111'));
             expect(History).to.be.null;
         });
     });
 
     describe('#update()', () => {
         it('should return History updated', async () => {
+            let test = await HistoryController.getAll();
+            test = test[0];
             const fields = {
                 name: 'Luis'
             };
-            const History = await HistoryController.update(/**/, fields);
+            const History = await HistoryController.update(test._id, fields);
             expect(History).to.not.be.undefined;
             expect(History.name).to.be.equal(fields.name);
         });
@@ -61,7 +62,7 @@ describe('History Controller', () => {
             const fields = {
                 name: 'Luis'
             };
-            const History = await HistoryController.update(/**/, fields);
+            const History = await HistoryController.update(mongoose.Types.ObjectId('111111111111'), fields);
             expect(History).to.be.undefined;
         });
 
@@ -69,8 +70,10 @@ describe('History Controller', () => {
 
     describe('#delete()', () => {
         it('should return null', async () => {
-            const History = await HistoryController.delete(/**/);
-            expect(History).to.be.null;
+            let test = await HistoryController.getAll();
+            test = test[0];
+            const History = await HistoryController.delete(test._id);
+            expect(History).to.not.be.undefined;
         });
     });
 

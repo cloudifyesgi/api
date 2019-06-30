@@ -69,7 +69,7 @@ describe('User Controller', () => {
     describe('#delete()', () => {
         it('should return null', async () => {
             const user = await userController.delete('l@l.fr');
-            expect(user).to.be.null;
+            expect(user).to.not.be.undefined;
         });
     });
 

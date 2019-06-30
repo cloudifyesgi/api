@@ -1,9 +1,9 @@
 'use strict';
 
-const models = require('../models');
+const models = require('../../models');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-require('../config').passport(passport);
+require('../../config').passport(passport);
 const dotenv = require('dotenv');
 dotenv.config();
 const User = models.User;
@@ -18,21 +18,28 @@ class AuthController {
         const user = await User.findOne({
             email: email
         });
-
         if (!user) {
             return {success: false, message: "authentication failed"};
         } else {
             // check if password matches
             if(user.comparePassword(password)) {
-                console.log(process.env.PASSPORT_SECRET);
-                const token = jwt.sign(user.toJSON(), process.env.PASSPORT_SECRET,{ expiresIn: '30m' });
+                const token = jwt.sign(user.toJSON(), process.env.PASSPORT_SECRET,{ expiresIn: '5days' });
                 // return the information including token as JSON
-                return {success: true, token: 'JWT ' + token};
+                return {success: true, message: token, user: user};
             } else {
-                console.log('test');
                 return {success: false, message: "authentication failed"};
             }
         }
+    }
+
+    async register(email, name, firstname,  password) {
+        let newUser = new User({
+            email: email,
+            name: name,
+            firstname: firstname,
+            password: password
+        });
+        return await newUser.save();
     }
 
     authenticate(){

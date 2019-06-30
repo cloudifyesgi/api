@@ -2,30 +2,32 @@
 
 require('dotenv').config();
 const modeEnv = process.env.MODE_ENV || 'development';
-
-// const Rollbar = require("rollbar");
-// const rollbar = new Rollbar({
-//     accessToken: 'd3f9e301c7664fb98c08f8ff95663dd6',
-//     captureUncaught: true,
-//     captureUnhandledRejections: true
-// });
+const cloudifySocket = require("./sockets").get();
 
 const mongoConnection = require('./config').mongo_connection;
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
 const RouterBuilder = require('./routes');
 const app = express();
-// app.use(rollbar.errorHandler());
-mongoConnection(modeEnv);
+const connection = mongoConnection(modeEnv);
 app.use(morgan('dev'));
+app.use(cors());
+const server = require('http').createServer(app);
+cloudifySocket.run(server);
 
-app.get('/', (req, res, next) => {
-    res.send('Shengapi start !').end();
+setInterval(() => {
+    cloudifySocket.clientConnected.forEach((client) => {
+        client.emit("seq-num", "hey les amis");
+    });
+}, 1000);
+
+app.on('close', () => {
+    connection.removeAllListeners();
 });
 
 RouterBuilder.build(app);
 
-
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Listening on ${port} ....`));
+server.listen(port, () => console.log(`Listening on ${port} ....`));

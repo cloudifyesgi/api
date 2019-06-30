@@ -3,7 +3,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
-const AuthController = require("../controllers").AuthController;
+const AuthController = require("../../controllers").AuthController;
 
 router.use(bodyParser.json());
 
@@ -23,4 +23,18 @@ router.post('/login', async (req, res, next) => {
     res.json(auths);*/
 });
 
+router.post('/register', async (req, res) => {
+    const email = req.body.email;
+    const name = req.body.name;
+    const firstname = req.body.firstname;
+    const password = req.body.password;
+    try {
+        const g = await AuthController.register(email, name, firstname, password);
+        res.status(201).json(g).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
 module.exports = router;
+
