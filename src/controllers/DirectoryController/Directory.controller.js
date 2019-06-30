@@ -61,10 +61,8 @@ class DirectoryController extends Controller {
     }
 
     async getTreeDirectory(id) {
-        console.log(id);
         id = id === '0' || id === undefined || id === null ? null : mongoose.Types.ObjectId(id);
         if (!id) return [{name: 'Home', _id: '0'}];
-        console.log(id);
         const directory = await this.getById(id);
         let res = await this.getTreeDirectory(directory.parent_directory);
         res.push(directory);

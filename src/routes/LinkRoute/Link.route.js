@@ -20,12 +20,28 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/file/:id', UserController.checkLevel(1), async (req, res) => {
+    try {
+        const Links = await LinkController.getByFileId(req.params.id);
+        res.json(Links);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/dir/:id', async (req, res) => {
+    try {
+        const Links = await LinkController.getByDirId(req.params.id);
+        res.json(Links);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
     try {
-        const g = await LinkController.create(req.body.link,req.body.link_type,req.body.expiry_date,req.body.is_activated,req.body.link_password);
-        res.status(201).end();
+        const g = await LinkController.create(req.body.link,req.body.link_type,req.body.expiry_date,req.body.is_activated,req.body.link_password,req.body.user,req.body.directory,req.body.file);
+        res.json(g).status(201).end();
     } catch(err) {
         res.status(409).end();
     }

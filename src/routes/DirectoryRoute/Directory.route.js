@@ -48,7 +48,6 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id/histories', UserController.checkLevel(1), async (req, res) => {
     try {
         const histories = await HistoryController.getByDirectories(req.params.id);
-        console.log(histories);
         res.json(histories);
     } catch (e) {
         console.log(e);

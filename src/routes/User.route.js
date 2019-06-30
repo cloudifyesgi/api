@@ -28,7 +28,6 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     }
 }).get('/id/:id', async (req, res) => {
     try {
-        console.log(req.params);
         const users = await UserController.getById(req.params.id);
         res.json(users);
     } catch (e) {
@@ -74,7 +73,6 @@ router.delete('/', async (req, res, next) => {
     }
     try {
         const g = await UserController.delete(email);
-        console.log(g);
         res.status(200).end();
     } catch(err) {
         res.status(409).end();
