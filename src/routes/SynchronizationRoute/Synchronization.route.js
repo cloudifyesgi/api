@@ -6,15 +6,39 @@ const router = express.Router();
 const SynchronizationController = require("../../controllers").SynchronizationController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
+const mongoose = require('mongoose');
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
 
+
+router.get('/map/:id', async (req, res) => {
+    try {
+        const g = await SynchronizationController.getSyncFolderMapById(req.params.id);
+        res.json(g).status(201).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
+
 router.get('/directory/:directory', async (req, res) => {
     try {
-        const g = await SynchronizationController.getByDirectory(req.params.directory);
+        const g = await SynchronizationController.getByDirectoryAndUser(req.params.directory,req.user._id);
         res.json(g);
+        res.status(201).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
+
+router.get('/user/', async (req, res) => {
+    try {
+        const g = await SynchronizationController.getByUser(req.user._id);
+        res.json(g);
+        console.log(g);
         res.status(201).end();
     } catch(err) {
         console.log(err);
@@ -59,11 +83,11 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
-    const id = req.body.id;
-    if(id === undefined) {
+router.delete('/:id', async (req, res) => {
+    if(req.params.id === undefined) {
         return res.status(400).end();
     }
+    const id = mongoose.Types.ObjectId(req.params.id);
     try {
         const g = await SynchronizationController.delete(id);
         res.status(200).end();
