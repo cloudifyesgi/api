@@ -26,7 +26,7 @@ class FileController extends Controller{
 
     async delete(id) {
         let File = await this.getById(id);
-        return await super.delete(File);
+        return await super.softDelete(File);
     }
 
     async isFirstVersion(name, directory) {

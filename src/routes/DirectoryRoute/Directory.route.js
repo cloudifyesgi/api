@@ -25,6 +25,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
+        console.log(children);
         const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
@@ -48,7 +49,6 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id/histories', UserController.checkLevel(1), async (req, res) => {
     try {
         const histories = await HistoryController.getByDirectories(req.params.id);
-        console.log(histories);
         res.json(histories);
     } catch (e) {
         console.log(e);
@@ -62,14 +62,12 @@ router.post('/', async (req, res) => {
         if(g) {
             HistoryController.create('created', g._id, null, null, null, req.user.id);
             HistoryController.create('addedDir', req.body.parent_directory, null, g._id, null, req.user.id);
-            console.log(g);
             res.json(g).status(201).end();
         } else {
             res.status(500).end();
         }
 
     } catch (err) {
-        console.log(err);
         res.status(409).end();
     }
 });
@@ -84,19 +82,28 @@ router.put('/', async (req, res) => {
         const g = await DirectoryController.update(id, req.body);
 
         if (g === null || g === undefined) res.status(204).end();
-        else res.status(200).end();
+        else {
+            HistoryController.create('modified', g._id, null, null, null, req.user.id);
+            res.status(200).end();
+        }
     } catch (err) {
         res.status(400).end();
     }
 });
 
-router.delete('/', async (req, res) => {
-    const id = req.body.id;
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id;
     if (id === undefined) {
         return res.status(400).end();
     }
     try {
-        const g = await DirectoryController.delete(id);
+        const directory = await DirectoryController.getById(id);
+
+        if(directory) {
+            const g = await DirectoryController.delete(id);
+            HistoryController.create('deletedFile', directory.parent_directory, null, null, directory._id, req.user.id);
+        }
+
         res.status(200).end();
     } catch (err) {
         res.status(409).end();

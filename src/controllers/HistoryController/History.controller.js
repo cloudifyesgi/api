@@ -43,7 +43,12 @@ class HistoryController extends Controller {
     }
 
     async getByFile(file_id) {
-        return await History.find({file: file_id});
+        console.log(mongoose.Types.ObjectId(file_id));
+        console.log(file_id);
+        return await History.find({file: mongoose.Types.ObjectId(file_id)}).populate('directory')
+            .populate('child_directory')
+            .populate('child_file')
+            .populate('user');
     }
 }
 

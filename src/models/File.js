@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoose_delete = require('mongoose-delete');
 const Schema = mongoose.Schema;
 
 const FileSchema = new Schema({
@@ -27,6 +28,7 @@ const FileSchema = new Schema({
         ref: 'Directory'
     }
 }, {
+    timestamps: true,
     autoCreate: true,
     collection: 'File'
 });
@@ -37,6 +39,7 @@ class FileClass {
 }
 
 FileSchema.loadClass(FileClass);
+FileSchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true, overrideMethods: true });
 const File = mongoose.model('File', FileSchema);
 
 module.exports = File;

@@ -31,7 +31,7 @@ class DirectoryController extends Controller {
 
     async delete(id) {
         let Directory = await this.getById(id);
-        return await super.delete(Directory);
+        return await super.softDelete(Directory);
     }
 
     async getDirectoryByParent(parentId, idUser) {
@@ -42,7 +42,7 @@ class DirectoryController extends Controller {
     async getFilesByDirectory(id, idUser) {
         id = id === '0' ? null : mongoose.Types.ObjectId(id);
         return await File.aggregate( [
-            {$match: { directory: id}},
+            {$match: { directory: id, deleted: false}},
             {$sort: {"file_version": -1}},
             {$group: {
                 _id: "$name",
@@ -54,6 +54,8 @@ class DirectoryController extends Controller {
                 user_create: {$first: "$user_create"},
                 user_update: {$first: "$user_update"},
                 directory: {$first: "$directory"},
+                createdAt: {$first: "$createdAt"},
+                updatedAt: {$first: "$updatedAt"},
             }}
         ]);
         // return await File.find( {directory: id, user_create: idUser} ).sort( {file_version: -1} );

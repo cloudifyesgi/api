@@ -20,16 +20,14 @@ class Controller {
             return undefined;
         }
 
-        const res = await this.model.findOneAndUpdate(
+        return await this.model.findOneAndUpdate(
             {
                 _id: model._id
             }, {
                 $set: fields
             }, {
-                new : true
+                new: true
             });
-
-        return res;
     }
 
     async delete(model) {
@@ -37,6 +35,19 @@ class Controller {
             return undefined;
         }
         return await this.model.findOneAndDelete({_id : model._id}, (err) => {
+            if (err) {
+                console.error(err);
+                return false;
+            }
+            else return true;
+        });
+    }
+
+    async softDelete(model) {
+        if(model === undefined){
+            return undefined;
+        }
+        return await this.model.delete({_id : model._id}, (err) => {
             if (err) {
                 console.error(err);
                 return false;
