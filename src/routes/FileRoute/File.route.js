@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
         let g                = null;
         const isFirstVersion = await FileController.isFirstVersion(req.body.name, req.body.directory);
         if (isFirstVersion) {
-            g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.user_update, req.body.directory);
+            g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.directory);
         } else {
             const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
             g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_create, req.body.user_update, req.body.directory);
