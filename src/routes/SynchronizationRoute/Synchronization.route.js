@@ -6,6 +6,7 @@ const router = express.Router();
 const SynchronizationController = require("../../controllers").SynchronizationController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
+const mongoose = require('mongoose');
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
@@ -82,11 +83,11 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
-    const id = req.body.id;
-    if(id === undefined) {
+router.delete('/:id', async (req, res) => {
+    if(req.params.id === undefined) {
         return res.status(400).end();
     }
+    const id = mongoose.Types.ObjectId(req.params.id);
     try {
         const g = await SynchronizationController.delete(id);
         res.status(200).end();
