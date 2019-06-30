@@ -3,6 +3,8 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const File = models.File;
+const mongoose = require('mongoose');
+
 
 class FileController extends Controller{
 
@@ -10,9 +12,9 @@ class FileController extends Controller{
         super(File);
     }
 
-    async create(name,date_create,file_version,file_type) {
+    async create(name,date_create,file_version,file_type,user,parent_directory) {
         let newFile = new File({
-            name:name,date_create:date_create,file_version:file_version,file_type:file_type
+            name:name,date_create:date_create,file_version:file_version,file_type:file_type,user_create:mongoose.Types.ObjectId(user),directory:mongoose.Types.ObjectId(parent_directory)
         });
         return await newFile.save();
     }

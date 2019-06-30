@@ -11,10 +11,33 @@ router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
 
+
+router.get('/map/:id', async (req, res) => {
+    try {
+        const g = await SynchronizationController.getSyncFolderMapById(req.params.id);
+        res.json(g).status(201).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
+
 router.get('/directory/:directory', async (req, res) => {
     try {
-        const g = await SynchronizationController.getByDirectory(req.params.directory);
+        const g = await SynchronizationController.getByDirectoryAndUser(req.params.directory,req.user._id);
         res.json(g);
+        res.status(201).end();
+    } catch(err) {
+        console.log(err);
+        res.status(409).end();
+    }
+});
+
+router.get('/user/', async (req, res) => {
+    try {
+        const g = await SynchronizationController.getByUser(req.user._id);
+        res.json(g);
+        console.log(g);
         res.status(201).end();
     } catch(err) {
         console.log(err);

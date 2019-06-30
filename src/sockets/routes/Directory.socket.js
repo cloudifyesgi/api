@@ -4,6 +4,7 @@ const directoryControllerSocket = require('../controllers/Directory.controller.s
 
 const createEvent = require('../../helpers/socket').createEvent;
 module.exports    = {
-    directoryCreate: createEvent("directory:create",  directoryControllerSocket.create)
+    directoryCreate: createEvent("directory:create",  directoryControllerSocket.create),
+    directoryDelete: createEvent("directory:delete",  directoryControllerSocket.delete)
 };
 

@@ -12,13 +12,14 @@ class DirectoryController extends Controller {
         super(Directory);
     }
 
-    async create(name, user_create, parent_directory) {
+    async create(name, user_create, parent_directory,date) {
         parent_directory = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
         let newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
             user_update: mongoose.Types.ObjectId(user_create),
             parent_directory: parent_directory !== undefined ? mongoose.Types.ObjectId(parent_directory) : undefined,
+            date_create: date
         });
         return await newDirectory.save();
     }
@@ -51,6 +52,23 @@ class DirectoryController extends Controller {
         res.push(directory);
         return res;
     }
+
+    async getByParentId(id){
+        return await this.model.find({parent_directory: id}).populate('user_create');
+    }
+
+    async getByParentIdNoUser(id){
+        return await this.model.find({parent_directory: mongoose.Types.ObjectId(id)});
+    }
+
+    async getFilesByDirectoryNoUser(id) {
+        return await fileController.getAll({directory: mongoose.Types.ObjectId(id)});
+    }
+
+    async getAll(options) {
+        return await this.model.find({}, options).populate('user_create');
+    }
+
 }
 
 module.exports = new DirectoryController();
