@@ -70,8 +70,6 @@ router.post('/', async (req, res) => {
                 return res.status(500).send(err);
             console.log('File uploaded!');
         });
-        console.log('parent dir :');
-        console.log(g.parent_directory);
         HistoryController.create('created', null, g._id, null, null, req.user.id);
         HistoryController.create('addedFile', g.directory, null, null, g._id, req.user.id);
         // const h = await HistoryController.create("upload",req.body.date_create);
@@ -111,8 +109,6 @@ router.delete('/:id', async (req, res) => {
         const file = await FileController.getById(id);
 
         if(file) {
-            console.log('dir edited after delete');
-            console.log(file.directory);
             const g = await FileController.delete(id);
             HistoryController.create('deletedFile', file.directory, null, null, file._id, req.user.id);
         }

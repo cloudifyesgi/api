@@ -10,8 +10,15 @@ class Controller {
         return await this.model.find(where);
     }
 
+    async softGetAll() {
+        return await this.model.find({deleted: false});
+    }
     async getById(id) {
         return await this.model.findOne({_id: id});
+    }
+
+    async softGetById(id) {
+        return await this.model.findOne({_id: id, deleted: false});
     }
 
     async update(model, fields) {
