@@ -25,7 +25,6 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
-        console.log(children);
         const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
@@ -101,7 +100,7 @@ router.delete('/:id', async (req, res) => {
 
         if(directory) {
             const g = await DirectoryController.delete(id);
-            HistoryController.create('deletedFile', directory.parent_directory, null, null, directory._id, req.user.id);
+            HistoryController.create('deletedDir', directory.parent_directory, null, directory._id, null, req.user.id);
         }
 
         res.status(200).end();
