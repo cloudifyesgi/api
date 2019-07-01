@@ -26,17 +26,17 @@ class FileController extends Controller{
     }
 
     async delete(id) {
-        let File = await this.softGetById(id);
+        let File = await this.getById(id);
         return await super.softDelete(File);
     }
 
     async isFirstVersion(name, directory) {
-        let exists = await File.find( { name: name, directory: directory, deleted: false} );
+        let exists = await File.find( { name: name, directory: directory} );
         return exists[0] === undefined;
     }
 
     async getLastVersion(name, directory) {
-        let lastVersion = await File.find( { name: name, directory: directory, deleted: false} ).sort({ file_version: -1}).limit(1);
+        let lastVersion = await File.find( { name: name, directory: directory} ).sort({ file_version: -1}).limit(1);
         if(lastVersion[0] === undefined) {
             return 0;
         }
@@ -46,11 +46,11 @@ class FileController extends Controller{
     }
 
     async getAllVersions(name) {
-        return await File.find( { name: name, deleted: false} ).sort( {file_version: 1} );
+        return await File.find( { name: name} ).sort( {file_version: 1} );
     }
 
     async getVersion(name, number) {
-        let file =  await File.findOne( { name: name, file_version: number, deleted: false} );
+        let file =  await File.findOne( { name: name, file_version: number} );
         const lastVersion = await this.getLastVersion(name, file.directory);
         let original_id = file._id;
         file.file_version = lastVersion + 1;

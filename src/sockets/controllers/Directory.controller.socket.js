@@ -9,6 +9,8 @@ class DirectoryControllerSocket {
     }
 
     async create(data) {
+        console.log(" in directory create");
+        console.log(data);
         try {
             if (data.id === '0') {
                 console.log('Folder ' + data.id + ' doesnt exists');

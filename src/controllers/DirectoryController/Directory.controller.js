@@ -19,7 +19,7 @@ class DirectoryController extends Controller {
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
             user_update: mongoose.Types.ObjectId(user_create),
-            parent_directory: parent_directory,
+            parent_directory: parent_directory !== undefined ? mongoose.Types.ObjectId(parent_directory) : undefined,
             date_create: date
         });
         return await newDirectory.save();
@@ -36,14 +36,14 @@ class DirectoryController extends Controller {
     }
 
     async getDirectoryByParent(parentId, idUser) {
-        parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
-        return await this.model.find({parent_directory: parentId, user_create: idUser, deleted: false});
+        parentId = parentId === '0' ? null : mongoose.Types.ObjectId(parentId);
+        return await this.model.find({parent_directory: parentId, user_create: idUser});
     }
 
-    async getFilesByDirectory(parentId, idUser) {
-        parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
+    async getFilesByDirectory(id, idUser) {
+        id = id === '0' ? null : mongoose.Types.ObjectId(id);
         return await File.aggregate( [
-            {$match: { directory: parentId, deleted: false}},
+            {$match: { directory: id, deleted: false}},
             {$sort: {"file_version": -1}},
             {$group: {
                 _id: "$name",
@@ -64,31 +64,28 @@ class DirectoryController extends Controller {
     }
 
     async getTreeDirectory(id) {
-        id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
+        id = id === '0' || id === undefined || id === null ? null : mongoose.Types.ObjectId(id);
         if (!id) return [{name: 'Home', _id: '0'}];
-        const directory = await this.softGetById(id);
+        const directory = await this.getById(id);
         let res = await this.getTreeDirectory(directory.parent_directory);
         res.push(directory);
         return res;
     }
 
     async getByParentId(id){
-        id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await this.model.find({parent_directory: id, deleted: false}).populate('user_create');
+        return await this.model.find({parent_directory: id}).populate('user_create');
     }
 
     async getByParentIdNoUser(id){
-        id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await this.model.find({parent_directory: mongoose.Types.ObjectId(id), deleted: false});
+        return await this.model.find({parent_directory: mongoose.Types.ObjectId(id)});
     }
 
     async getFilesByDirectoryNoUser(id) {
-        id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await fileController.getAll({directory: mongoose.Types.ObjectId(id), deleted: false});
+        return await fileController.getAll({directory: mongoose.Types.ObjectId(id)});
     }
 
     async getAll(options) {
-        return await this.model.find({deleted: false}, options).populate('user_create');
+        return await this.model.find({}, options).populate('user_create');
     }
 
 }

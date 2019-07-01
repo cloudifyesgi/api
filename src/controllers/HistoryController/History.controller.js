@@ -3,9 +3,6 @@ const mongoose   = require('mongoose');
 const models     = require('../../models');
 const Controller = require('../Controller');
 const History    = models.History;
-const Directory  = models.Directory;
-const User       = models.User;
-const File       = models.File;
 
 class HistoryController extends Controller {
 
@@ -14,15 +11,15 @@ class HistoryController extends Controller {
     }
 
     async create(action, directory, file, childDirectory, childFile, user) {
-        directory      = directory !== undefined && directory !== null && directory !== '0' ? mongoose.Types.ObjectId(directory) : null;
-        file           = file !== undefined && file !== null ? mongoose.Types.ObjectId(file) : null;
+        directory      = directory ? mongoose.Types.ObjectId(directory) : null;
+        file           = file ? mongoose.Types.ObjectId(file) : null;
         childDirectory = childDirectory === '0' || childDirectory === null || childDirectory === undefined ? null : mongoose.Types.ObjectId(childDirectory);
         childFile      = childFile === '0' || childFile === null || childFile === undefined ? null : mongoose.Types.ObjectId(childFile);
         let newHistory = new History({
             action: action,
             directory: directory,
             child_directory: childDirectory,
-            child_file: childFile,
+            childFile: childFile,
             file: file,
             user: user
         });
@@ -35,26 +32,23 @@ class HistoryController extends Controller {
     }
 
     async getByDirectories(directory) {
-        return await History.find({directory: mongoose.Types.ObjectId(directory)})
-            .populate('user')
-            .populate('directory')
+        return await History.find({directory: mongoose.Types.ObjectId(directory)}).populate('directory')
             .populate('child_directory')
             .populate('child_file')
-            .populate('file');
+            .populate('user');
     }
-
     async delete(id) {
         let history = await this.getById(id);
         return await super.delete(history);
     }
 
     async getByFile(file_id) {
-        return await History.find({file: mongoose.Types.ObjectId(file_id)})
-            .populate('user')
-            .populate('directory')
+        console.log(mongoose.Types.ObjectId(file_id));
+        console.log(file_id);
+        return await History.find({file: mongoose.Types.ObjectId(file_id)}).populate('directory')
             .populate('child_directory')
             .populate('child_file')
-            .populate('file');
+            .populate('user');
     }
 }
 

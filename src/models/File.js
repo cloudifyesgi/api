@@ -39,7 +39,7 @@ class FileClass {
 }
 
 FileSchema.loadClass(FileClass);
-FileSchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true});
+FileSchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true, overrideMethods: true });
 const File = mongoose.model('File', FileSchema);
 
 module.exports = File;
