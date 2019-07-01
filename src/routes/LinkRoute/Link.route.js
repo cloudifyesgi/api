@@ -10,13 +10,15 @@ const AuthController = require('../../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await LinkController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const Links = await LinkController.getById(req.params.id);
-        res.json(Links);
+        console.log('GET /link/:id');
+        console.log(Links);
+        res.json(Links).status(200);
     } catch (e) {
         res.status(409).end();
     }
