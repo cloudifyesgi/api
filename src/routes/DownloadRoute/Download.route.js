@@ -19,7 +19,7 @@ router.use(fileUpload());
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     console.log('A file id must be specified');
     res.status(404).end();
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         //const Files = await FileController.getById(req.params.id);
         const filePath = path.join(process.env.FILES_PATH + req.params.id);

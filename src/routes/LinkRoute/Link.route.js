@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
-}).get('/file/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/file/:id', async (req, res) => {
     try {
         const Links = await LinkController.getByFileId(req.params.id);
         res.json(Links);
