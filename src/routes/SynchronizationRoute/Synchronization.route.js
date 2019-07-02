@@ -38,7 +38,6 @@ router.get('/user/', async (req, res) => {
     try {
         const g = await SynchronizationController.getByUser(req.user._id);
         res.json(g);
-        console.log(g);
         res.status(201).end();
     } catch(err) {
         console.log(err);
