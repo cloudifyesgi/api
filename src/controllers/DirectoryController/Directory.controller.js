@@ -35,15 +35,24 @@ class DirectoryController extends Controller {
         return await super.softDelete(Directory);
     }
 
-    async getDirectoryByParent(parentId, idUser) {
+    async getDirectoryByParent(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
-        return await this.model.find({parent_directory: parentId, user_create: idUser, deleted: false});
+        if(deleted) return await this.model.find({user_create: userId, deleted: deleted});
+        if(!parentId) return await this.model.find({parent_directory: parentId, user_create: userId, deleted: deleted});
+        return await this.model.find({parent_directory: parentId, deleted: deleted});
+
     }
 
-    async getFilesByDirectory(parentId, idUser) {
+    async getFilesByDirectory(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
+        let match;
+        console.log(userId);
+        if(deleted)  match = {deleted: true, user_create: mongoose.Types.ObjectId(userId)};
+        else if(parentId === null) match = { directory: parentId, deleted: false, user_create: mongoose.Types.ObjectId(userId)};
+        else match = { directory: parentId, deleted: false};
+
         return await File.aggregate( [
-            {$match: { directory: parentId, deleted: false}},
+            {$match: match},
             {$sort: {"file_version": -1}},
             {$group: {
                 _id: "$name",
@@ -63,10 +72,11 @@ class DirectoryController extends Controller {
         // return await fileController.getAll({directory: id, user_create: idUser});
     }
 
-    async getTreeDirectory(id) {
+    async getTreeDirectory(id, deleted = false) {
         id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
         if (!id) return [{name: 'Home', _id: '0'}];
-        const directory = await this.softGetById(id);
+        const directory = await Directory.findOne({_id: id, deleted: deleted});
+
         let res = await this.getTreeDirectory(directory.parent_directory);
         res.push(directory);
         return res;

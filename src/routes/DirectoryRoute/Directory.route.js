@@ -25,7 +25,19 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id);
-        const breadcrumb = await DirectoryController.getTreeDirectory(parentId, req.user.id);
+        const breadcrumb = await DirectoryController.getTreeDirectory(parentId);
+        const result = {children: children, breadcrumb: breadcrumb};
+        res.json(result).status(200).end();
+
+    } catch (e) {
+        console.log(e);
+        res.status(404).end();
+    }
+}).get('/:id/deletedChildren', async (req, res) => {
+    try {
+        const parentId = req.params.id;
+        const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id, true);
+        const breadcrumb = await DirectoryController.getTreeDirectory(parentId, true);
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
 
@@ -36,7 +48,19 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id/files', async (req, res) => {
     try {
         const id = req.params.id;
-        const files = await DirectoryController.getFilesByDirectory(id, req.user.id);
+        const files = await DirectoryController.getFilesByDirectory(id);
+        files.forEach( function (e) {
+            e._id = e.file_id;
+        });
+        res.json(files).status(200).end();
+    } catch (e) {
+        console.log(e);
+        res.status(404).end();
+    }
+}).get('/:id/deletedFiles', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const files = await DirectoryController.getFilesByDirectory(id, req.user.id, true);
         files.forEach( function (e) {
             e._id = e.file_id;
         });
