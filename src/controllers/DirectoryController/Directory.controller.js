@@ -101,6 +101,15 @@ class DirectoryController extends Controller {
         return await this.model.find({deleted: false}, options).populate('user_create');
     }
 
+    async isDeleted(id) {
+        console.log(id);
+        if(id === '0' || id === null || id === undefined) return false;
+        console.log(id);
+        const directory = await Directory.findOne({_id: mongoose.Types.ObjectId(id), deleted: false});
+        if(!!directory) return this.isDeleted(directory.parent_directory);
+        return true;
+    }
+
 }
 
 module.exports = new DirectoryController();
