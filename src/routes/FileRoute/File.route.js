@@ -55,8 +55,9 @@ router.post('/', async (req, res) => {
         if (isFirstVersion) {
             g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.directory);
         } else {
+            FileController.undeleteOldVersion(req.body.name, req.body.directory);
             const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
-            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_create, req.body.user_update, req.body.directory);
+            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_update, req.body.directory);
         }
 
         let fileToUpload = req.files.file;
@@ -100,9 +101,11 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id/:idParent', async (req, res) => {
     const id = req.params.id;
-    if (id === undefined) {
+    const idParent = req.params.idParent;
+    if (id === undefined || idParent === undefined) {
+        console.log('id ou idParent undefined');
         return res.status(400).end();
     }
     try {

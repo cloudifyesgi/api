@@ -32,19 +32,18 @@ class FileController extends Controller {
 
     async delete(id) {
         let File = await this.softGetById(id);
-        return await super.softDelete(File);
+        return await super.softDeleteAllVersions(File);
     }
 
     async isFirstVersion(name, directory) {
-        let exists = await File.find({name: name, directory: directory, deleted: false});
+        let exists = await File.find({name: name, directory: directory });
         return exists[0] === undefined;
     }
 
     async getLastVersion(name, directory) {
         let lastVersion = await File.find({
             name: name,
-            directory: directory,
-            deleted: false
+            directory: directory
         }).sort({file_version: -1}).limit(1);
         if (lastVersion[0] === undefined) {
             return 0;
@@ -66,6 +65,17 @@ class FileController extends Controller {
         file._id          = new ObjectId();
         fs.createReadStream(process.env.FILES_PATH + original_id).pipe(fs.createWriteStream(process.env.FILES_PATH + file._id));
         return await File.insertMany(file);
+    }
+
+    async undeleteOldVersion(name, directory) {
+        try {
+            await File.updateMany({name: name, directory: directory}, {$set: { "deleted": false}})
+        }
+        catch (e) {
+            console.log(e.toString());
+            return false
+        }
+        return true;
     }
 }
 

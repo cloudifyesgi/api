@@ -62,6 +62,19 @@ class Controller {
             else return true;
         });
     }
+
+    async softDeleteAllVersions(model) {
+        if(model === undefined){
+            return undefined;
+        }
+        return await this.model.delete({name: model.name, directory: model.directory}, (err) => {
+            if (err) {
+                console.log(err);
+                return false;
+            }
+            else return true;
+        });
+    }
 }
 
 module.exports = Controller;
