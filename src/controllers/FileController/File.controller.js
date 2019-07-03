@@ -52,13 +52,13 @@ class FileController extends Controller {
         }
     }
 
-    async getAllVersions(name) {
-        return await File.find({name: name, deleted: false}).sort({file_version: 1})
+    async getAllVersions(name, directory) {
+        return await File.find({name: name, directory:directory, deleted: false}).sort({file_version: 1})
             .populate('user_create');
     }
 
-    async getVersion(name, number) {
-        let file          = await File.findOne({name: name, file_version: number, deleted: false});
+    async getVersion(name, number, directory) {
+        let file          = await File.findOne({name: name, file_version: number, directory:directory, deleted: false});
         const lastVersion = await this.getLastVersion(name, file.directory);
         let original_id   = file._id;
         file.file_version = lastVersion + 1;

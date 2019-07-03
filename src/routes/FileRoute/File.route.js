@@ -25,17 +25,17 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
-}).get('/:name/versions', async (req, res) => {
+}).get('/:name/:directory/versions', async (req, res) => {
     try {
-        const files = await FileController.getAllVersions(req.params.name);
+        const files = await FileController.getAllVersions(req.params.name, req.params.directory);
         res.json(files);
     } catch (e) {
         console.log(e.toString());
         res.status(409).end();
     }
-}).get('/version/:name/:number', async (req, res) => {
+}).get('/version/:name/:directory/:number', async (req, res) => {
     try {
-        const file = await FileController.getVersion(req.params.name, req.params.number);
+        const file = await FileController.getVersion(req.params.name, req.params.number, req.params.directory);
         res.json(file);
     } catch (e) {
         console.log(e.toString());
