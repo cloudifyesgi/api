@@ -76,6 +76,17 @@ router.delete('/', async (req, res) => {
     } catch(err) {
         res.status(409).end();
     }
+}).delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    if(id === undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const g = await LinkController.delete(id);
+        res.status(200).end();
+    } catch(err) {
+        res.status(409).end();
+    }
 });
 
 
