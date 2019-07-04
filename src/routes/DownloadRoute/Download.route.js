@@ -16,7 +16,7 @@ router.use(AuthController.authenticate());
 router.use(fileUpload());
 
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     console.log('A file id must be specified');
     res.status(404).end();
 }).get('/:id', async (req, res) => {
