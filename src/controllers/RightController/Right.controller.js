@@ -10,9 +10,9 @@ class RightController extends Controller{
         super(Right);
     }
 
-    async create(view_right,update_right) {
+    async create(right,directory,file,user) {
         let newRight = new Right({
-            view_right:view_right,update_right:update_right
+            right:right,directory:directory,file:file,user:user
         });
         return await newRight.save();
     }

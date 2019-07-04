@@ -24,9 +24,22 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await RightController.create(req.body.view_right,req.body.update_right);
+        const mail = req.body.email;
+        if (mail === undefined) {
+            console.log('no email specified');
+            return res.status(400).end();
+        }
+        await UserController.getByEmail(mail).then( value => {
+            if (value === null) {
+                console.log('email doesnt exist');
+                return res.status(303).end();
+            }
+            req.body._id = value._id;
+        });
+        const g = await RightController.create(req.body.right,req.body.directory,req.body.file,req.body._id);
         res.status(201).end();
     } catch(err) {
+        console.log(err.toString());
         res.status(409).end();
     }
 });

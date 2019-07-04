@@ -14,7 +14,7 @@ router.use(AuthController.authenticate());
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     const directories = await DirectoryController.getAll();
     res.json(directories);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const directories = await DirectoryController.getById(req.params.id);
         res.json(directories).status(200).end();

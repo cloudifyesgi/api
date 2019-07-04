@@ -2,11 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RightSchema = new Schema({
-    view_right: {
-        type: Boolean
-    },
-    update_right: {
-        type: Boolean
+    right: {
+        type: String
     },
     directory: {
         type:Schema.Types.ObjectId,
@@ -19,10 +16,6 @@ const RightSchema = new Schema({
     user: {
         type:Schema.Types.ObjectId,
         ref:'User'
-    },
-    user_group: {
-        type:Schema.Types.ObjectId,
-        ref:'UserGroup'
     }
 }, {
     autoCreate: true,
