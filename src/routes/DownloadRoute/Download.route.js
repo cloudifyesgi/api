@@ -7,6 +7,7 @@ const fileSystem = require('fs');
 const path = require('path');
 const router = express.Router();
 const FileController = require("../../controllers").FileController;
+const DirectoryController = require("../../controllers").DirectoryController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
 const HistoryController = require('../../controllers').HistoryController;
@@ -36,6 +37,28 @@ router.get('/', async (req, res) => {
         //res.json(Files);
     } catch (e) {
         console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/folder/:id', async (req, res) => {
+    try {
+        const zipPath = await DirectoryController.zip(req.params.id);
+
+        const stat = fileSystem.statSync(zipPath);
+
+        res.writeHead(200, {
+            'Content-Type': 'text/plain',
+            'Content-Length': stat.size
+        });
+
+        const readStream = fileSystem.createReadStream(zipPath);
+
+        readStream.on('end', function() {
+            fileSystem.unlinkSync(zipPath);
+        });
+
+        readStream.pipe(res);
+    } catch (e) {
+        console.log(e);
         res.status(409).end();
     }
 });
