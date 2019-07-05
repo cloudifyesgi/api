@@ -34,23 +34,54 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/sharedDir/:directoryId', async (req, res) => {
+    try {
+        const Rights = await RightController.getRightsByDir(req.params.directoryId);
+        res.json(Rights);
+    } catch (e) {
+        res.status(409).end();
+    }
+}).get('/sharedFile/:fileId', async (req, res) => {
+    try {
+        const Rights = await RightController.getRightsByFile(req.params.fileId);
+        res.json(Rights);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
     try {
-        const mail = req.body.email;
-        if (mail === undefined) {
+        const mails = req.body.email;
+        if (mails === undefined) {
             console.log('no email specified');
             return res.status(400).end();
         }
-        await UserController.getByEmail(mail).then( value => {
-            if (value === null) {
-                console.log('email doesnt exist');
-                return res.status(401).end();
-            }
-            req.body._id = value._id;
-        });
-        const g = await RightController.create(req.body.right,req.body.directory,req.body.file,req.body._id);
+        const ids = [];
+        const start = async () => {
+            await RightController.asyncForEach(mails, async (
+                element) => {
+                await UserController.getByEmail(element).then( value => {
+                    if (value === null) {
+                        console.log('email doesnt exist');
+                        return;
+                    }
+                    ids.push(value._id);
+                });
+            });
+        };
+        await start();
+        if (ids.length !== mails.length) {
+            return res.status(401).end();
+        }
+        const end = async () => {
+            await RightController.asyncForEach(ids, async (
+                element) => {
+                const g = await RightController.create(req.body.right,req.body.directory,req.body.file,element);
+            });
+        };
+        await end();
+
         res.status(201).end();
     } catch(err) {
         console.log(err.toString());
@@ -83,6 +114,18 @@ router.delete('/', async (req, res) => {
         const g = await RightController.delete(id);
         res.status(200).end();
     } catch(err) {
+        res.status(409).end();
+    }
+}).delete('/:id', async (req, res) => {
+    const id = req.params.id;
+    if(id === undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const g = await RightController.delete(id);
+        res.status(200).end();
+    } catch(err) {
+        console.log(err.toString());
         res.status(409).end();
     }
 });

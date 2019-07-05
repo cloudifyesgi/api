@@ -66,6 +66,14 @@ class RightController extends Controller{
             await callback(array[index], index, array);
         }
     }
+
+    async getRightsByDir(id) {
+        return await this.model.find({directory: id});
+    }
+
+    async getRightsByFile(id) {
+        return await this.model.find({file: id});
+    }
 }
 
 module.exports = new RightController();
