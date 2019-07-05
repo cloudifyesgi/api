@@ -20,6 +20,20 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/directory/:id', async (req, res) => {
+    try {
+        const Folders = await RightController.getFoldersByUser(req.params.id);
+        res.json(Folders);
+    } catch (e) {
+        res.status(409).end();
+    }
+}).get('/file/:id', async (req, res) => {
+    try {
+        const Files = await RightController.getFilesByUser(req.params.id);
+        res.json(Files);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {
@@ -32,7 +46,7 @@ router.post('/', async (req, res) => {
         await UserController.getByEmail(mail).then( value => {
             if (value === null) {
                 console.log('email doesnt exist');
-                return res.status(303).end();
+                return res.status(401).end();
             }
             req.body._id = value._id;
         });
