@@ -82,7 +82,6 @@ router.get('/', async (req, res) => {
         const isDeleted = await DirectoryController.isDeleted(req.params.id);
         res.json({isDeleted: isDeleted}).status(200).end();
     } catch (e) {
-        console.log(e);
         res.status(409).end();
     }
 });
