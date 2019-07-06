@@ -54,10 +54,13 @@ router.post('/', async (req, res) => {
         const isFirstVersion = await FileController.isFirstVersion(req.body.name, req.body.directory);
         if (isFirstVersion) {
             g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.directory);
+            HistoryController.create('created', null, g._id, null, null, req.user.id);
         } else {
             FileController.undeleteOldVersion(req.body.name, req.body.directory);
             const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
-            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_update, req.body.directory);
+            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion.file_version, 10) + 1, req.body.file_type, req.body.user_update, req.body.directory);
+            await FileController.redirectTarget(lastVersion, g);
+            HistoryController.create('updated', null, g._id, null, null, req.user.id);
         }
 
         let fileToUpload = req.files.file;
@@ -71,7 +74,6 @@ router.post('/', async (req, res) => {
                 return res.status(500).send(err);
             console.log('File uploaded!');
         });
-        HistoryController.create('created', null, g._id, null, null, req.user.id);
         HistoryController.create('addedFile', g.directory, null, null, g._id, req.user.id);
         // const h = await HistoryController.create("upload",req.body.date_create);
         res.status(201).end();
