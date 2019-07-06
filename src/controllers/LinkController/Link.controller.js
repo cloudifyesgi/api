@@ -37,12 +37,21 @@ class LinkController extends Controller{
     async getByFileId(id) {
         let link = await Link.findOne({file: id});
         return link;
-
     }
 
     async getByDirId(id) {
         let link = await Link.findOne({directory: id});
         return link;
+    }
+
+    async getLinksByFileId(id) {
+        let links = await Link.find({file: id});
+        return links;
+    }
+
+    async getLinksByDirId(id) {
+        let links = await Link.find({directory: id});
+        return links;
     }
 }
 
