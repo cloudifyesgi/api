@@ -48,6 +48,20 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     } catch (e) {
         res.status(409).end();
     }
+}).get('/DirShare/:sharedDir/:userId', async (req, res) => {
+    try {
+        const Right = await RightController.getRightByDirAndUser(req.params.sharedDir, req.params.userId);
+        res.json(Right);
+    } catch (e) {
+        res.status(409).end();
+    }
+}).get('/FileShare/:sharedFile/:userId', async (req, res) => {
+    try {
+        const Right = await RightController.getRightByFileAndUser(req.params.sharedFile, req.params.userId);
+        res.json(Right);
+    } catch (e) {
+        res.status(409).end();
+    }
 });
 
 router.post('/', async (req, res) => {

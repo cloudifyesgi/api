@@ -74,6 +74,14 @@ class RightController extends Controller{
     async getRightsByFile(id) {
         return await this.model.find({file: id});
     }
+
+    async getRightByDirAndUser(sharedDir, userId) {
+        return await this.model.findOne({directory: sharedDir, user: userId});
+    }
+
+    async getRightByFileAndUser(sharedFile, userId) {
+        return await this.model.findOne({file: sharedFile, user: userId});
+    }
 }
 
 module.exports = new RightController();
