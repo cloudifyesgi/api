@@ -13,7 +13,7 @@ router.use(AuthController.authenticate());
 router.get('/', UserController.checkLevel(1), async (req, res) => {
     const users = await RightController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const Rights = await RightController.getById(req.params.id);
         res.json(Rights);
