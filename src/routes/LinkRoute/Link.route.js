@@ -16,23 +16,37 @@ router.get('/', async (req, res) => {
 }).get('/:id', async (req, res) => {
     try {
         const Links = await LinkController.getById(req.params.id);
-        console.log('GET /link/:id');
-        console.log(Links);
         res.json(Links).status(200);
     } catch (e) {
         res.status(409).end();
     }
 }).get('/file/:id', async (req, res) => {
     try {
-        const Links = await LinkController.getByFileId(req.params.id);
-        res.json(Links);
+        const Link = await LinkController.getByFileId(req.params.id);
+        res.json(Link);
     } catch (e) {
         console.log(e.toString());
         res.status(409).end();
     }
 }).get('/dir/:id', async (req, res) => {
     try {
-        const Links = await LinkController.getByDirId(req.params.id);
+        const Link = await LinkController.getByDirId(req.params.id);
+        res.json(Link);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/file/links/:id', async (req, res) => {
+    try {
+        const Links = await LinkController.getLinksByFileId(req.params.id);
+        res.json(Links);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/dir/links/:id', async (req, res) => {
+    try {
+        const Links = await LinkController.getLinksByDirId(req.params.id);
         res.json(Links);
     } catch (e) {
         console.log(e.toString());
