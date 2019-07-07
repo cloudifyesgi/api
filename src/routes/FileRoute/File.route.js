@@ -10,6 +10,7 @@ const FileController    = require("../../controllers").FileController;
 const UserController    = require("../../controllers").UserController;
 const AuthController    = require('../../controllers').AuthController;
 const HistoryController = require('../../controllers').HistoryController;
+const QuotaController   = require('../../controllers').QuotaController;
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
@@ -44,7 +45,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/',QuotaController.checkUpload(),async (req, res) => {
     try {
         if (!req.files) {
             console.log('No file to upload or file empty');
@@ -55,7 +56,7 @@ router.post('/', async (req, res) => {
         if (isFirstVersion) {
             g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.directory);
         } else {
-            FileController.undeleteOldVersion(req.body.name, req.body.directory);
+            await FileController.undeleteOldVersion(req.body.name, req.body.directory);
             const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
             g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_update, req.body.directory);
         }

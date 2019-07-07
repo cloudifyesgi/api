@@ -3,6 +3,7 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const Transaction = models.Transaction;
+const mongoose = require('mongoose');
 
 class TransactionController extends Controller{
 
@@ -10,9 +11,9 @@ class TransactionController extends Controller{
         super(Transaction);
     }
 
-    async create(date,type,reference,path,name_subscription,price_subscription) {
+    async create(date,type,reference,path,name_subscription,price_subscription,subscription,user) {
         let newTransaction = new Transaction({
-            date:date,type:type,reference:reference,path:path,name_subscription:name_subscription,price_subscription:price_subscription
+            date:date,type:type,reference:reference,path:path,name_subscription:name_subscription,price_subscription:price_subscription,subscription:mongoose.Types.ObjectId(subscription),user:mongoose.Types.ObjectId(user)
         });
         return await newTransaction.save();
     }

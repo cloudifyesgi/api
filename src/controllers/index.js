@@ -13,5 +13,6 @@ module.exports = {
     HistoryController: require('./HistoryController/History.controller'),
     LinkController: require('./LinkController/Link.controller'),
     DirectoryController: require('./DirectoryController/Directory.controller'),
-    SynchronizationController: require('./SynchronizationController/Synchronization.controller')
+    SynchronizationController: require('./SynchronizationController/Synchronization.controller'),
+    QuotaController: require('./QuotaController/Quota.controller')
 };

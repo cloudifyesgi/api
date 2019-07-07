@@ -24,7 +24,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await TransactionController.create(req.body.date,req.body.type,req.body.reference,req.body.path,req.body.name_subscription,req.body.price_subscription);
+        const g = await TransactionController.create(req.body.date,req.body.type,req.body.reference,req.body.path,req.body.name_subscription,req.body.price_subscription,req.body.subscription,req.user._id);
         res.status(201).end();
     } catch(err) {
         res.status(409).end();
