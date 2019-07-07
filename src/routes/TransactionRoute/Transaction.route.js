@@ -10,10 +10,10 @@ const AuthController = require('../../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await TransactionController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const Transactions = await TransactionController.getById(req.params.id);
         res.json(Transactions);
