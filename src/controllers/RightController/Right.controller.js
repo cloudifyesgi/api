@@ -13,6 +13,10 @@ class RightController extends Controller{
     }
 
     async create(right,directory,file,user) {
+        const exists = await this.model.findOne({directory:directory, file:file, user:user});
+        if (exists !== null) {
+            return null;
+        }
         let newRight = new Right({
             right:right,directory:directory,file:file,user:user
         });

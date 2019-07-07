@@ -88,6 +88,9 @@ router.post('/', async (req, res) => {
         if (ids.length !== mails.length) {
             return res.status(401).end();
         }
+
+
+
         const end = async () => {
             await RightController.asyncForEach(ids, async (
                 element) => {
