@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
         const directories = await DirectoryController.getById(req.params.id);
         res.json(directories).status(200).end();
     } catch (e) {
-        res.status(409).end();
+        res.status(404).end();
     }
 }).get('/:id/children', async (req, res) => {
     try {
@@ -30,7 +30,6 @@ router.get('/', async (req, res) => {
         res.json(result).status(200).end();
 
     } catch (e) {
-        console.log(e);
         res.status(404).end();
     }
 }).get('/:id/deletedChildren', async (req, res) => {
@@ -42,7 +41,6 @@ router.get('/', async (req, res) => {
         res.json(result).status(200).end();
 
     } catch (e) {
-        console.log(e);
         res.status(404).end();
     }
 }).get('/:id/files', async (req, res) => {
@@ -75,14 +73,14 @@ router.get('/', async (req, res) => {
         res.json(histories);
     } catch (e) {
         console.log(e);
-        res.status(409).end();
+        res.status(404).end();
     }
 }).get('/:id/isDeleted', async (req, res) => {
     try {
         const isDeleted = await DirectoryController.isDeleted(req.params.id);
         res.json({isDeleted: isDeleted}).status(200).end();
     } catch (e) {
-        res.status(409).end();
+        res.status(404).end();
     }
 });
 
@@ -98,7 +96,7 @@ router.post('/', async (req, res) => {
         }
 
     } catch (err) {
-        res.status(409).end();
+        res.status(404).end();
     }
 });
 
@@ -136,7 +134,7 @@ router.delete('/:id', async (req, res) => {
 
         res.status(200).end();
     } catch (err) {
-        res.status(409).end();
+        res.status(404).end();
     }
 });
 
