@@ -11,8 +11,7 @@ router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
 router.get('/', async (req, res) => {
-    const users = await TransactionController.getAll();
-    res.json(users);
+    const users = await TransactionController.getAll();    res.json(users);
 }).get('/:id', async (req, res) => {
     try {
         const Transactions = await TransactionController.getById(req.params.id);
@@ -27,6 +26,7 @@ router.post('/', async (req, res) => {
         const g = await TransactionController.create(req.body.date,req.body.type,req.body.reference,req.body.path,req.body.name_subscription,req.body.price_subscription,req.body.subscription,req.user._id);
         res.status(201).end();
     } catch(err) {
+        console.log(err);
         res.status(409).end();
     }
 });

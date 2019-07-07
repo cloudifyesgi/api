@@ -19,23 +19,20 @@ class QuotaController{
     }
 
     async userUsedStorage(user){
-        return await File.find({user_create: user}).then((files)=>{
-            let filePath;
-            let stat;
-            let totalSize = 0;
-            //Sum size of all uploaded files
-            for (let file of files){
-                filePath = path.join(process.env.FILES_PATH + file._id);
-                //Sum size only if size exist
-                if (fileSystem.existsSync(filePath)) {
-                    stat = fileSystem.statSync(filePath);
-                    totalSize += parseInt(stat.size /1000)
-                }
+        let files = await File.find({user_create: user});
+        let filePath;
+        let stat;
+        let totalSize = 0;
+        //Sum size of all uploaded files
+        for (let file of files){
+            filePath = path.join(process.env.FILES_PATH + file._id);
+            //Sum size only if size exist
+            if (fileSystem.existsSync(filePath)) {
+                stat = fileSystem.statSync(filePath);
+                totalSize += parseInt(stat.size /1000)
             }
-            return totalSize;
-        });
-
-
+        }
+        return totalSize;
     }
 
     checkFileSize(maxSize, files){
@@ -47,8 +44,8 @@ class QuotaController{
     }
 
      checkUpload(){
-        return  (req, res, next) => {
-             this.getCurrentSubscription(req.user._id).then(async (transaction) =>{
+        return async (req, res, next) => {
+             let transaction =await this.getCurrentSubscription(req.user._id);
                 //Check total file size is above subscription storage accepted size
                 if(transaction.subscription.storage < req.files.file.size/1000 + await this.userUsedStorage(req.user._id)){
                     res.status(412).end();
@@ -63,7 +60,7 @@ class QuotaController{
                     res.status(412).end();
                 }
                 next();
-            });
+
         }
     }
 }

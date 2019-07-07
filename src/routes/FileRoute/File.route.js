@@ -16,6 +16,10 @@ router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 router.use(fileUpload());
 
+router.post('/testPat',QuotaController.checkUpload(), async (req, res) => {
+
+});
+
 router.get('/', async (req, res) => {
     const users = await FileController.getAll();
     res.json(users);
