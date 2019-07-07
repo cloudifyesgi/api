@@ -46,7 +46,6 @@ class DirectoryController extends Controller {
     async getFilesByDirectory(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
         let match;
-        console.log(userId);
         if(deleted)  match = {deleted: true, user_create: mongoose.Types.ObjectId(userId)};
         else if(parentId === null) match = { directory: parentId, deleted: false, user_create: mongoose.Types.ObjectId(userId)};
         else match = { directory: parentId, deleted: false};

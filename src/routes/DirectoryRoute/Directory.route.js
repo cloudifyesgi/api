@@ -48,7 +48,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 }).get('/:id/files', async (req, res) => {
     try {
         const id = req.params.id;
-        const files = await DirectoryController.getFilesByDirectory(id);
+        const files = await DirectoryController.getFilesByDirectory(id, req.user.id);
         files.forEach( function (e) {
             e._id = e.file_id;
         });
