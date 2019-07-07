@@ -11,7 +11,7 @@ const HistoryController = require('../../controllers').HistoryController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const directories = await DirectoryController.getAll();
     res.json(directories);
 }).get('/:id', async (req, res) => {
@@ -37,7 +37,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id, true);
-        const breadcrumb = await DirectoryController.getTreeDirectory(parentId, true);
+        const breadcrumb = [{name: 'Trash', _id: '0'}];
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
 
@@ -75,6 +75,13 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
         res.json(histories);
     } catch (e) {
         console.log(e);
+        res.status(409).end();
+    }
+}).get('/:id/isDeleted', async (req, res) => {
+    try {
+        const isDeleted = await DirectoryController.isDeleted(req.params.id);
+        res.json({isDeleted: isDeleted}).status(200).end();
+    } catch (e) {
         res.status(409).end();
     }
 });

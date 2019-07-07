@@ -9,7 +9,7 @@ const AuthController = require('../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await UserController.getAll('-password');
     res.json(users);
 }).get('/:email', async (req, res) => {

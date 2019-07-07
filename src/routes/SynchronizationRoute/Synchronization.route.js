@@ -45,10 +45,10 @@ router.get('/user/', async (req, res) => {
     }
 });
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await SynchronizationController.getAll();
     res.json(users);
-    }).get('/:id', UserController.checkLevel(1), async (req, res) => {
+    }).get('/:id', async (req, res) => {
     try {
         const Synchronizations = await SynchronizationController.getById(req.params.id);
         res.json(Synchronizations);
