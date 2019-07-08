@@ -12,14 +12,12 @@ class TransactionController extends Controller{
         super(Transaction);
     }
 
-    async create(date,type,reference,path,name_subscription,price_subscription,subscription,user) {
+    async create(type,reference,path,name_subscription,price_subscription,subscription,user) {
         let newTransaction = new Transaction({
-            date:date,type:type,reference:reference,path:path,name_subscription:name_subscription,price_subscription:price_subscription,subscription:mongoose.Types.ObjectId(subscription),user:mongoose.Types.ObjectId(user)
+            date:Date.now(),type:type,reference:reference,path:path,name_subscription:name_subscription,price_subscription:price_subscription,subscription:mongoose.Types.ObjectId(subscription),user:mongoose.Types.ObjectId(user)
         });
-        let currentSubscription = await QuotaController.getCurrentSubscription(user).then( (data) =>{
-            console.log(data);
-            this.update(data._id,{date_end: Date.now()});
-        });
+        let currentSubscription = await QuotaController.getCurrentSubscription(user);
+        await this.update(currentSubscription._id,{date_end: Date.now()});
         return await newTransaction.save();
     }
 

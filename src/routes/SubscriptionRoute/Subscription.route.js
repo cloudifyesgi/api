@@ -13,6 +13,15 @@ router.use(AuthController.authenticate());
 router.get('/', async (req, res) => {
     const users = await SubscriptionController.getAll();
     res.json(users);
+}).get('/active', async(req, res) =>{
+    try{
+        const q = await SubscriptionController.getActiveSubscription();
+        res.json(q);
+        res.status(201).end();
+    }catch (e){
+        console.log(e);
+        res.status(409).end();
+    }
 }).get('/:id', async (req, res) => {
     try {
         const Subscriptions = await SubscriptionController.getById(req.params.id);
