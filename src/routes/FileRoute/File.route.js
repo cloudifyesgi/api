@@ -36,6 +36,7 @@ router.get('/', async (req, res) => {
 }).get('/version/:name/:directory/:number', async (req, res) => {
     try {
         const file = await FileController.getVersion(req.params.name, req.params.number, req.params.directory);
+        HistoryController.create('reverted', null, file[0]._id, null, null, req.user.id);
         res.json(file);
     } catch (e) {
         console.log(e.toString());
@@ -94,7 +95,7 @@ router.put('/', async (req, res) => {
 
         if (g === null || g === undefined) res.status(204).end();
         else {
-            HistoryController.create('modified', null, g._id, null, null, req.user.id);
+            HistoryController.create('renamed', null, g._id, null, null, req.user.id);
             res.status(200).end();
         }
     } catch (err) {
@@ -115,6 +116,7 @@ router.delete('/:id/:idParent', async (req, res) => {
 
         if(file) {
             const g = await FileController.delete(id);
+            HistoryController.create('deleted', null, id, null, null, req.user.id);
             HistoryController.create('deletedFile', file.directory, null, null, file._id, req.user.id);
         }
 
