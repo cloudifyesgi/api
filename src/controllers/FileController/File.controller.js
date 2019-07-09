@@ -66,7 +66,7 @@ class FileController extends Controller {
         const lastVersion = await this.getLastVersion(name, file.directory);
         let original_id   = file._id;
         file.file_version = parseInt(lastVersion.file_version, 10) + 1;
-        file._id          = new ObjectId();
+        file._id          = new mongoose.Types.ObjectId();
         fs.createReadStream(process.env.FILES_PATH + original_id).pipe(fs.createWriteStream(process.env.FILES_PATH + file._id));
         if (await this.redirectTarget(lastVersion, file) === false) {
             console.log('Error while redirecting targets in revert method');
