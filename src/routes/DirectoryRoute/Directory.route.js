@@ -129,6 +129,7 @@ router.delete('/:id', async (req, res) => {
 
         if(directory) {
             const g = await DirectoryController.delete(id);
+            HistoryController.create('deleted', id, null, null, null, req.user.id);
             HistoryController.create('deletedDir', directory.parent_directory, null, directory._id, null, req.user.id);
         }
 
