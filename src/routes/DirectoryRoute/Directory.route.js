@@ -119,7 +119,7 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
     const id = req.params.id;
     if (id === undefined) {
         return res.status(400).end();
@@ -136,6 +136,45 @@ router.delete('/:id', async (req, res) => {
         res.status(200).end();
     } catch (err) {
         res.status(404).end();
+    }
+}).delete('/undelete/:id', async (req, res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const dir = await DirectoryController.getById(id);
+
+        if (dir) {
+            const g = await DirectoryController.undelete(id);
+            HistoryController.create('restored', id, null, null, null, req.user.id);
+        }
+        res.json(dir);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).delete('/hard/:id', async (req ,res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const dir = await DirectoryController.getById(id);
+
+        if (dir) {
+            const g = await DirectoryController.hardDelete(id);
+        }
+        res.json(dir);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
     }
 });
 

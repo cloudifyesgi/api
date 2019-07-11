@@ -34,9 +34,20 @@ class FileController extends Controller {
         return await super.update(File, fields);
     }
 
-    async delete(id) {
+    async hardDelete(id) {
+        let File = await this.getById(id);
+        this.deleteAllLinksTo(File);
+        return await this.hardDeleteAllVersions(File);
+    }
+
+    async softDelete(id) {
         let File = await this.softGetById(id);
         return await super.softDeleteAllVersions(File);
+    }
+
+    async undelete(id) {
+        let File = await this.getById(id);
+        return await this.undeleteOldVersion(File.name, File.directory);
     }
 
     async isFirstVersion(name, directory) {
@@ -109,6 +120,31 @@ class FileController extends Controller {
 
     async redirectHistorys(lastVersion, newVersion) {
         return await History.updateMany({file:lastVersion._id}, {file:newVersion._id});
+    }
+
+    async deleteAllLinksTo(File) {
+        try {
+            await this.deleteLinks(File);
+            await this.deleteRights(File);
+            await this.deleteHistorys(File);
+        }
+        catch (e) {
+            console.log(e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    async deleteLinks(File) {
+        return await Link.deleteMany({file: File._id});
+    }
+
+    async deleteRights(File) {
+        return await Right.deleteMany({file: File._id});
+    }
+
+    async deleteHistorys(File) {
+        return await History.deleteMany({file: File._id});
     }
 }
 

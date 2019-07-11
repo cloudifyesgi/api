@@ -54,7 +54,7 @@ class Controller {
         if(model === undefined){
             return undefined;
         }
-        return await this.model.delete({_id : model._id}, (err) => {
+        return await this.model.update({_id : model._id}, {deleted: true},(err) => {
             if (err) {
                 console.error(err);
                 return false;
@@ -67,7 +67,20 @@ class Controller {
         if(model === undefined){
             return undefined;
         }
-        return await this.model.delete({name: model.name, directory: model.directory}, (err) => {
+        return await this.model.update({name: model.name, directory: model.directory}, {deleted: true}, (err) => {
+            if (err) {
+                console.log(err);
+                return false;
+            }
+            else return true;
+        });
+    }
+
+    async hardDeleteAllVersions(model) {
+        if(model === undefined){
+            return undefined;
+        }
+        return await this.model.deleteMany({name: model.name, directory: model.directory}, (err) => {
             if (err) {
                 console.log(err);
                 return false;

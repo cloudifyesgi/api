@@ -104,7 +104,7 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/:id/:idParent', async (req, res) => {
+router.delete('/delete/:id/:idParent', async (req, res) => {
     const id = req.params.id;
     const idParent = req.params.idParent;
     if (id === undefined || idParent === undefined) {
@@ -115,14 +115,53 @@ router.delete('/:id/:idParent', async (req, res) => {
         const file = await FileController.getById(id);
 
         if(file) {
-            const g = await FileController.delete(id);
+            const g = await FileController.softDelete(id);
             HistoryController.create('deleted', null, id, null, null, req.user.id);
             HistoryController.create('deletedFile', file.directory, null, null, file._id, req.user.id);
         }
 
         res.status(200).end();
     } catch (err) {
-        console.log(err);
+        console.log(err.toString());
+        res.status(409).end();
+    }
+}).delete('/undelete/:id', async (req, res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const file = await FileController.getById(id);
+
+        if (file) {
+            const g = await FileController.undelete(id);
+            HistoryController.create('restored', null, id, null, null, req.user.id);
+        }
+        res.json(file);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).delete('/hard/:id', async (req ,res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const file = await FileController.getById(id);
+
+        if (file) {
+            const g = await FileController.hardDelete(id);
+        }
+        res.json(file);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
         res.status(409).end();
     }
 });

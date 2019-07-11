@@ -166,6 +166,46 @@ class DirectoryController extends Controller {
         return false;
     }
 
+    async undelete(id) {
+        return await Directory.update({_id: id}, {deleted: false});
+    }
+
+    async hardDelete(id) {
+        let Dir = await this.getById(id);
+        this.deleteAllLinksTo(Dir);
+        // this.deleteAllElementsInto(Dir); @TODO compléter cette fonction
+        return await Directory.deleteMany({_id: id});
+    }
+
+    async deleteAllLinksTo(Dir) {
+        try {
+            await this.deleteLinks(Dir);
+            await this.deleteRights(Dir);
+            await this.deleteHistorys(Dir);
+        }
+        catch (e) {
+            console.log(e.toString());
+            return false;
+        }
+        return true;
+    }
+
+    async deleteLinks(Dir) {
+        return await Directory.deleteMany({directory: Dir._id});
+    }
+
+    async deleteRights(Dir) {
+        return await Directory.deleteMany({directory: Dir._id});
+    }
+
+    async deleteHistorys(Dir) {
+        return await Directory.deleteMany({directory: Dir._id});
+    }
+
+    async deleteAllElementsInto(Dir) {
+        await Directory.deleteMany({parent_directory: Dir._id});
+        await File.deleteMany({directory: Dir._id});
+    }
 }
 
 module.exports = new DirectoryController();
