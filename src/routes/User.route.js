@@ -10,7 +10,7 @@ router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
 router.get('/', async (req, res) => {
-    const users = await UserController.getAll('-password');
+    const users = await UserController.getAll();
     res.json(users);
 }).get('/:email', async (req, res) => {
     try {

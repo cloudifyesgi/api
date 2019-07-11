@@ -3,10 +3,12 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
+
 const DirectoryController = require("../../controllers").DirectoryController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
 const HistoryController = require('../../controllers').HistoryController;
+
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
