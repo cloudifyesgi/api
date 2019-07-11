@@ -5,6 +5,7 @@ const Controller = require('../Controller');
 const Transaction = models.Transaction;
 const mongoose = require('mongoose');
 const QuotaController = require('../QuotaController/Quota.controller');
+const SubscriptionController = require('../SubscriptionController/Subscription.controller');
 
 class TransactionController extends Controller{
 
@@ -18,6 +19,15 @@ class TransactionController extends Controller{
         });
         let currentSubscription = await QuotaController.getCurrentSubscription(user);
         await this.update(currentSubscription._id,{date_end: Date.now()});
+        return await newTransaction.save();
+    }
+
+    async userFirstTransaction(user){
+        let freeSubscription = await SubscriptionController.getFreeSubscription();
+        let newTransaction = new Transaction({
+            date:Date.now(),type:"temp",reference:"temp",path:"temp",name_subscription:freeSubscription.name,price_subscription:0,subscription:mongoose.Types.ObjectId(freeSubscription._id),user:mongoose.Types.ObjectId(user)
+        });
+
         return await newTransaction.save();
     }
 

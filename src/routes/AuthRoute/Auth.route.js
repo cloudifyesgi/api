@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
 const AuthController = require("../../controllers").AuthController;
+const TransactionController = require("../../controllers").TransactionController;
 
 router.use(bodyParser.json());
 
@@ -13,6 +14,7 @@ router.post('/login', async (req, res, next) => {
         if(response.success) {
             res.json(response);
         } else {
+            console.log(response);
             res.status(401).send(response).end();
         }
     } catch(e) {
@@ -30,7 +32,13 @@ router.post('/register', async (req, res) => {
     const password = req.body.password;
     try {
         const g = await AuthController.register(email, name, firstname, password);
-        res.status(201).json(g).end();
+        try {
+            await TransactionController.userFirstTransaction(g._id);
+            res.status(201).json(g).end();
+        } catch(err) {
+            console.log(err.toString());
+            res.status(409).end();
+        }
     } catch(err) {
         console.log(err);
         res.status(409).end();

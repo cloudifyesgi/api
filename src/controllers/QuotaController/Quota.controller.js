@@ -5,6 +5,7 @@ const Transaction = models.Transaction;
 const File = models.File;
 const fileSystem = require('fs');
 const path = require('path');
+const mongoose = require('mongoose');
 
 class QuotaController{
 
@@ -19,7 +20,7 @@ class QuotaController{
     }
 
     async userUsedStorage(user){
-        let files = await File.find({user_create: user});
+        let files = await this.getUserLastVersionFiles(user);
         let filePath;
         let stat;
         let totalSize = 0;
@@ -40,7 +41,33 @@ class QuotaController{
     }
 
     async getUserFileNumber(user){
-        return await File.countDocuments({user_create: user});
+        let lastVersions = await this.getUserLastVersionFiles(user);
+        return lastVersions.length;
+    }
+
+    async getUserLastVersionFiles(user){
+        return await File.aggregate([
+            {$match: {
+                deleted: false,
+                user_create: mongoose.Types.ObjectId(user)
+            }},
+            {$sort: {"file_version": -1}},
+            {
+                $group: {
+                    _id: "$name",
+                    name: {$first: "$name"},
+                    file_version: {$first: "$file_version"},
+                    file_id: {$first: "$_id"},
+                    date_create: {$first: "$date_create"},
+                    file_type: {$first: "$file_type"},
+                    user_create: {$first: "$user_create"},
+                    user_update: {$first: "$user_update"},
+                    directory: {$first: "$directory"},
+                    createdAt: {$first: "$createdAt"},
+                    updatedAt: {$first: "$updatedAt"},
+                }
+            }
+        ]);
     }
 
      checkUpload(){

@@ -31,6 +31,10 @@ class SubscriptionController extends Controller{
         return await Subscription.find({status: true});
     }
 
+    async getFreeSubscription(){
+        return await Subscription.findOne({price: 0});
+    }
+
 }
 
 module.exports = new SubscriptionController();
