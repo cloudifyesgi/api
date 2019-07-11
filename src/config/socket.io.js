@@ -5,7 +5,12 @@ class SocketIo {
      constructor() {}
 
     static io(server) {
-         if(!SocketIo.socket) SocketIo.socket = socketIo(server);
+         if(!SocketIo.socket) {
+             console.log('new socket !');
+             SocketIo.socket = socketIo(server);
+         } else {
+             console.log("get socket");
+         }
          return SocketIo.socket;
     }
 }

@@ -13,4 +13,5 @@ module.exports = {
     Link: require('./Link'),
     Directory: require('./Directory'),
     Synchronization: require('./Synchronization'),
+    Docify: require('./Docify')
 };
