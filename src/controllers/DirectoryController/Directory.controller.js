@@ -37,6 +37,7 @@ class DirectoryController extends Controller {
 
     async delete(id) {
         let Directory = await this.getById(id);
+        this.softDeleteAllElementsInto(Directory);
         return await super.softDelete(Directory);
     }
 
@@ -167,13 +168,29 @@ class DirectoryController extends Controller {
     }
 
     async undelete(id) {
+        const dir = await Directory.findOne({_id: id});
+        this.undeleteSubFolders(dir);
         return await Directory.update({_id: id}, {deleted: false});
+    }
+
+    async undeleteSubFolders(Dir) {
+        const sub_folders = await Directory.find({parent_directory: Dir._id});
+        const start = async () => {
+            await this.asyncForEach(sub_folders, async (folder) => {
+                if (await this.hasSubFolders(folder)) {
+                    await this.undeleteSubFolders(folder);
+                }
+                await Directory.update({_id: folder._id}, {deleted: false})
+            });
+        };
+
+        await start();
     }
 
     async hardDelete(id) {
         let Dir = await this.getById(id);
         this.deleteAllLinksTo(Dir);
-        // this.deleteAllElementsInto(Dir); @TODO compléter cette fonction
+        this.deleteAllElementsInto(Dir); // @TODO compléter cette fonction
         return await Directory.deleteMany({_id: id});
     }
 
@@ -203,8 +220,43 @@ class DirectoryController extends Controller {
     }
 
     async deleteAllElementsInto(Dir) {
-        await Directory.deleteMany({parent_directory: Dir._id});
-        await File.deleteMany({directory: Dir._id});
+        const sub_folders = await Directory.find({parent_directory: Dir._id});
+        const start = async () => {
+            await this.asyncForEach(sub_folders, async (folder) => {
+                await this.deleteAllLinksTo(folder);
+                if (await this.hasSubFolders(folder)) {
+                    await this.deleteAllElementsInto(folder);
+                }
+                // Directory.deleteMany({_id: folder._id}); @TODO on supprime définitivement les sous dossiers ici ou pas ?
+            });
+        };
+
+        await start();
+    }
+
+    async asyncForEach(array, callback) {
+        for (let index = 0; index < array.length; index++) {
+            await callback(array[index], index, array);
+        }
+    }
+
+    async hasSubFolders(folder) {
+        const result = await Directory.find({parent_directory: folder._id});
+        return result.length > 0;
+    }
+
+    async softDeleteAllElementsInto(dir) {
+        const sub_folders = await Directory.find({parent_directory: dir._id});
+        const start = async () => {
+            await this.asyncForEach(sub_folders, async (folder) => {
+                if (await this.hasSubFolders(folder)) {
+                    await this.softDeleteAllElementsInto(folder);
+                }
+                await super.softDelete(folder);
+            });
+        };
+
+        await start();
     }
 }
 
