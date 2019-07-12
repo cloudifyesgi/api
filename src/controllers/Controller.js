@@ -71,7 +71,7 @@ class Controller {
         if(model === undefined){
             return undefined;
         }
-        return await this.model.update({name: model.name, directory: model.directory}, {deleted: true}, (err) => {
+        return await this.model.updateMany({name: model.name, directory: model.directory}, {deleted: true}, (err) => {
             if (err) {
                 console.log(err);
                 return false;
