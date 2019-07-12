@@ -12,6 +12,10 @@ const DocifySchema = new Schema({
         type: String,
         default: null
     },
+    plainText: {
+        type: String,
+        default: null
+    },
     user_create: {
         type:Schema.Types.ObjectId,
         ref:'User',
