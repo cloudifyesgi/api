@@ -73,21 +73,18 @@ class QuotaController{
      checkUpload(){
         return async (req, res, next) => {
              let transaction =await this.getCurrentSubscription(req.user._id);
-                //Check total file size is above subscription storage accepted size
                 if(transaction.subscription.storage < req.files.file.size/1000 + await this.userUsedStorage(req.user._id)){
+                    //Check total file size is above subscription storage accepted size
                     res.status(412).end();
-                }
-                //Check if files size is above subscription file accepted size
-                if(!this.checkFileSize(transaction.subscription.file_size, req.files)){
+                }else if(!this.checkFileSize(transaction.subscription.file_size, req.files)){
+                    //Check if files size is above subscription file accepted size
                     res.status(412).end();
-                }
-
-                //Check if number of file will be above subscription accepted number of file
-                if(await this.getUserFileNumber(req.user._id) + 1 > transaction.subscription.file_number){
+                }else if(await this.getUserFileNumber(req.user._id) + 1 > transaction.subscription.file_number){
+                    //Check if number of file will be above subscription accepted number of file
                     res.status(412).end();
+                }else{
+                    next();
                 }
-                next();
-
         }
     }
 }
