@@ -37,7 +37,6 @@ class DirectoryController extends Controller {
 
     async delete(id) {
         let Directory = await this.getById(id);
-        this.softDeleteAllElementsInto(Directory);
         return await super.softDelete(Directory);
     }
 
@@ -168,8 +167,6 @@ class DirectoryController extends Controller {
     }
 
     async undelete(id) {
-        const dir = await Directory.findOne({_id: id});
-        this.undeleteSubFolders(dir);
         return await Directory.update({_id: id}, {deleted: false});
     }
 
@@ -190,7 +187,7 @@ class DirectoryController extends Controller {
     async hardDelete(id) {
         let Dir = await this.getById(id);
         this.deleteAllLinksTo(Dir);
-        this.deleteAllElementsInto(Dir); // @TODO compléter cette fonction
+        this.deleteAllElementsInto(Dir);
         return await Directory.deleteMany({_id: id});
     }
 
@@ -227,7 +224,7 @@ class DirectoryController extends Controller {
                 if (await this.hasSubFolders(folder)) {
                     await this.deleteAllElementsInto(folder);
                 }
-                // Directory.deleteMany({_id: folder._id}); @TODO on supprime définitivement les sous dossiers ici ou pas ?
+                await Directory.deleteOne({_id: folder._id});
             });
         };
 

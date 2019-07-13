@@ -5,6 +5,7 @@ const Controller = require('../Controller');
 const Right = models.Right;
 const Directory = models.Directory;
 const File = models.File;
+const DirectoryController = require('../DirectoryController/Directory.controller');
 
 class RightController extends Controller{
 
@@ -40,7 +41,8 @@ class RightController extends Controller{
             await this.asyncForEach(SharedRights, async (
                 element) => {
                 let toPush = await Directory.findOne({ _id: element.directory, deleted: false});
-                if(toPush)
+                const isDeleted = await DirectoryController.isDeleted(element.directory);
+                if(toPush && !isDeleted)
                     await SharedFolders.push(toPush);
             });
         };
