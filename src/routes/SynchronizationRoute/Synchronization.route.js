@@ -19,7 +19,7 @@ router.get('/map/:id', async (req, res) => {
         res.json(g).status(201).end();
     } catch(err) {
         console.log(err);
-        res.status(409).end();
+        res.status(400).end();
     }
 });
 

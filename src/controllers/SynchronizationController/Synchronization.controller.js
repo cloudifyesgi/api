@@ -3,7 +3,7 @@
 const models = require('../../models');
 const Controller = require('../Controller');
 const Synchronization = models.Synchronization;
-const directoryController = require('../DirectoryController/Directory.controller');
+const DirectoryController = require('../DirectoryController/Directory.controller');
 const mongoose = require('mongoose');
 
 class SynchronizationController extends Controller{
@@ -50,23 +50,37 @@ class SynchronizationController extends Controller{
 
     async getSyncFolderMapById(id){
         let sync = await super.getById(id);
-        let directory = await directoryController.getById(sync.directory);
+        console.log(sync);
+        let directory = await DirectoryController.getById(sync.directory);
         let array = {};
         array[sync.local_path] = {id:directory._id,parent_id : 0, is_directory: true};
         return await this.getSyncFolder(array,sync.local_path,sync.directory);
     }
 
     async getSyncFolder(array,path,root){
-        for(let directory of await directoryController.getByParentIdNoUser(root)){
+        for(let directory of await DirectoryController.getByParentIdNoUser(root)){
             array = await this.getSyncFolder(array,path+'\\'+directory.name,directory._id);
             array[path+'\\'+directory.name ] = {id : directory._id , parent_id : root,is_directory : true};
         }
 
-        for(let file of await directoryController.getFilesByDirectoryNoUser(root)){
+        for(let file of await DirectoryController.getFilesByDirectoryNoUser(root)){
             array[path+'\\'+file.name ] = {id : file._id , parent_id : root,is_directory : false};
         }
         return array;
     }
+
+    async getSynchronizedParent(dir){
+        if(dir === undefined){
+            return undefined
+        }
+        const synchronization = await this.getByDirectory(dir._id);
+        if( synchronization.length === 0 ){
+            return await this.getSynchronizedParent(dir.parent_directory);
+        }else{
+            return synchronization[0]._id;
+        }
+    }
+
 }
 
 module.exports = new SynchronizationController();
