@@ -36,7 +36,9 @@ class FileControllerSocket {
             console.log('ObjectId(data.id) : ' + mongoose.Types.ObjectId(data.id));
             const g = await FileController.delete(mongoose.Types.ObjectId(data.id));
             fs.unlink(process.env.FILES_PATH + data.id, function (err) {
-                if (err) throw err;
+                if(err){
+                    return;
+                }
             });
             console.log(data.id + ' file deleted !');
         } catch (e) {

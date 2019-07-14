@@ -11,6 +11,7 @@ const mkdirp         = require('mkdirp');
 const fs             = require('fs');
 const AdmZip         = require('adm-zip');
 const rimraf         = require("rimraf");
+const Synchronization = models.Synchronization;
 
 class DirectoryController extends Controller {
 
@@ -104,6 +105,11 @@ class DirectoryController extends Controller {
     async getByParentIdNoUser(id) {
         id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
         return await this.model.find({parent_directory: mongoose.Types.ObjectId(id), deleted: false});
+    }
+
+    async getByUserCreate(id) {
+        id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
+        return await this.model.find({user_create: mongoose.Types.ObjectId(id), deleted: false});
     }
 
     async getFilesByDirectoryNoUser(id) {
@@ -259,6 +265,7 @@ class DirectoryController extends Controller {
 
         await start();
     }
+
 }
 
 module.exports = new DirectoryController();

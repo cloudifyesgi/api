@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const router = express.Router();
 
 const DirectoryController = require("../../controllers").DirectoryController;
+const SynchronizationController = require("../../controllers").SynchronizationController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
 const HistoryController = require('../../controllers').HistoryController;
+const io = require('../../config/socket.io')();
 
 
 router.use(bodyParser.json());
@@ -16,6 +18,13 @@ router.use(AuthController.authenticate());
 router.get('/', async (req, res) => {
     const directories = await DirectoryController.getAll();
     res.json(directories);
+}).get('/user', async (req, res) => {
+    try {
+        const directories = await DirectoryController.getByUserCreate(req.user._id);
+        res.json(directories).status(200).end();
+    } catch (e) {
+        res.status(404).end();
+    }
 }).get('/:id', async (req, res) => {
     try {
         const directories = await DirectoryController.getById(req.params.id);
@@ -92,6 +101,10 @@ router.post('/', async (req, res) => {
         if(g) {
             HistoryController.create('created', g._id, null, null, null, req.user.id);
             HistoryController.create('addedDir', req.body.parent_directory, null, g._id, null, req.user.id);
+            const synchronization = await SynchronizationController.getSynchronizedParent(g);
+            if(synchronization){
+                io.emit(synchronization,g);
+            }
             res.json(g).status(201).end();
         } else {
             res.status(500).end();
