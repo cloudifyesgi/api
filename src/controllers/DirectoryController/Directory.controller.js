@@ -55,9 +55,13 @@ class DirectoryController extends Controller {
     async getFilesByDirectory(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
         let match;
-        if(deleted)  match = {deleted: true, user_create: mongoose.Types.ObjectId(userId)};
-        else if(parentId === null) match = { directory: parentId, deleted: false, user_create: mongoose.Types.ObjectId(userId)};
-        else match = { directory: parentId, deleted: false};
+        if (deleted) match = {deleted: true, user_create: mongoose.Types.ObjectId(userId)};
+        else if (parentId === null) match = {
+            directory: parentId,
+            deleted: false,
+            user_create: mongoose.Types.ObjectId(userId)
+        };
+        else match = {directory: parentId, deleted: false};
 
         return await File.aggregate([
             {$match: match},
@@ -136,14 +140,15 @@ class DirectoryController extends Controller {
             for (let child of children) {
                 const res = await this.createTree(child._id, currentPath, directoryName, tempDir);
             }
-
+            console.log(directory.name);
             for (let file of files) {
                 const filePath    = process.env.FILES_PATH + file._id;
                 const newFilePath = `${currentPath}${file.name}`;
-
-                fs.copyFile(filePath, newFilePath, (err) => {
-                    if (err) console.log(err);
-                });
+                try {
+                    fs.copyFileSync(filePath, newFilePath);
+                } catch {
+                    console.log('error');
+                }
             }
 
             return {path: process.env.FOLDERS_DOWNLOAD_PATH + tempDir, name: directoryName};
@@ -163,7 +168,7 @@ class DirectoryController extends Controller {
             return zipPath;
         }
 
-        return false;
+        return null;
     }
 
     async undelete(id) {
@@ -172,7 +177,7 @@ class DirectoryController extends Controller {
 
     async undeleteSubFolders(Dir) {
         const sub_folders = await Directory.find({parent_directory: Dir._id});
-        const start = async () => {
+        const start       = async () => {
             await this.asyncForEach(sub_folders, async (folder) => {
                 if (await this.hasSubFolders(folder)) {
                     await this.undeleteSubFolders(folder);
@@ -196,8 +201,7 @@ class DirectoryController extends Controller {
             await this.deleteLinks(Dir);
             await this.deleteRights(Dir);
             await this.deleteHistorys(Dir);
-        }
-        catch (e) {
+        } catch (e) {
             console.log(e.toString());
             return false;
         }
@@ -218,7 +222,7 @@ class DirectoryController extends Controller {
 
     async deleteAllElementsInto(Dir) {
         const sub_folders = await Directory.find({parent_directory: Dir._id});
-        const start = async () => {
+        const start       = async () => {
             await this.asyncForEach(sub_folders, async (folder) => {
                 await this.deleteAllLinksTo(folder);
                 if (await this.hasSubFolders(folder)) {
@@ -244,7 +248,7 @@ class DirectoryController extends Controller {
 
     async softDeleteAllElementsInto(dir) {
         const sub_folders = await Directory.find({parent_directory: dir._id});
-        const start = async () => {
+        const start       = async () => {
             await this.asyncForEach(sub_folders, async (folder) => {
                 if (await this.hasSubFolders(folder)) {
                     await this.softDeleteAllElementsInto(folder);
