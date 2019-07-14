@@ -27,6 +27,14 @@ class SubscriptionController extends Controller{
         return await super.delete(Subscription);
     }
 
+    async getActiveSubscription(){
+        return await Subscription.find({status: true});
+    }
+
+    async getFreeSubscription(){
+        return await Subscription.findOne({price: 0});
+    }
+
 }
 
 module.exports = new SubscriptionController();

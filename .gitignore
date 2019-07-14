@@ -169,3 +169,7 @@ typings/
 .dynamodb/
 
 # End of https://www.gitignore.io/api/node,jetbrains+all
+
+uploads
+
+package-lock\.json

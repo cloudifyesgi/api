@@ -17,6 +17,9 @@ app.use(cors());
 const server = require('http').createServer(app);
 cloudifySocket.run(server);
 
+process.env.FILES_PATH = process.env.FILES_PATH ? process.env.FILES_PATH : './';
+process.env.FOLDERS_DOWNLOAD_PATH = process.env.FOLDERS_DOWNLOAD_PATH ? process.env.FOLDERS_DOWNLOAD_PATH : './downloads/';
+
 setInterval(() => {
     cloudifySocket.clientConnected.forEach((client) => {
         client.emit("seq-num", "hey les amis");

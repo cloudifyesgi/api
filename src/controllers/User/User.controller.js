@@ -21,6 +21,7 @@ class UserController extends Controller {
         return await newUser.save();
     }
 
+
     async getByEmail(email) {
         return await User.findOne({email: email});
     }

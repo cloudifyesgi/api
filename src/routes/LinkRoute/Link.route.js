@@ -10,27 +10,43 @@ const AuthController = require('../../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await LinkController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const Links = await LinkController.getById(req.params.id);
-        res.json(Links);
+        res.json(Links).status(200);
     } catch (e) {
         res.status(409).end();
     }
-}).get('/file/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/file/:id', async (req, res) => {
     try {
-        const Links = await LinkController.getByFileId(req.params.id);
-        res.json(Links);
+        const Link = await LinkController.getByFileId(req.params.id);
+        res.json(Link);
     } catch (e) {
         console.log(e.toString());
         res.status(409).end();
     }
 }).get('/dir/:id', async (req, res) => {
     try {
-        const Links = await LinkController.getByDirId(req.params.id);
+        const Link = await LinkController.getByDirId(req.params.id);
+        res.json(Link);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/file/links/:id', async (req, res) => {
+    try {
+        const Links = await LinkController.getLinksByFileId(req.params.id);
+        res.json(Links);
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).get('/dir/links/:id', async (req, res) => {
+    try {
+        const Links = await LinkController.getLinksByDirId(req.params.id);
         res.json(Links);
     } catch (e) {
         console.log(e.toString());
@@ -65,6 +81,17 @@ router.put('/', async (req, res) => {
 
 router.delete('/', async (req, res) => {
     const id = req.body.id;
+    if(id === undefined) {
+        return res.status(400).end();
+    }
+    try {
+        const g = await LinkController.delete(id);
+        res.status(200).end();
+    } catch(err) {
+        res.status(409).end();
+    }
+}).delete('/:id', async (req, res) => {
+    const id = req.params.id;
     if(id === undefined) {
         return res.status(400).end();
     }

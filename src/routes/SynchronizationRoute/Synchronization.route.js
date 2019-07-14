@@ -19,7 +19,7 @@ router.get('/map/:id', async (req, res) => {
         res.json(g).status(201).end();
     } catch(err) {
         console.log(err);
-        res.status(409).end();
+        res.status(400).end();
     }
 });
 
@@ -46,10 +46,10 @@ router.get('/user/', async (req, res) => {
     }
 });
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await SynchronizationController.getAll();
     res.json(users);
-    }).get('/:id', UserController.checkLevel(1), async (req, res) => {
+    }).get('/:id', async (req, res) => {
     try {
         const Synchronizations = await SynchronizationController.getById(req.params.id);
         res.json(Synchronizations);

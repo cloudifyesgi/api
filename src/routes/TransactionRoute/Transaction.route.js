@@ -4,16 +4,27 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
 const TransactionController = require("../../controllers").TransactionController;
+const QuotaController = require("../../controllers").QuotaController;
 const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
-    const users = await TransactionController.getAll();
-    res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+
+
+router.get('/', async (req, res) => {
+    const users = await TransactionController.getAll();    res.json(users);
+}).get('/current', async(req, res) =>{
+    try{
+        const q = await QuotaController.getCurrentSubscription(req.user._id);
+        res.json(q);
+        res.status(201).end();
+    }catch (e){
+        console.log(e);
+        res.status(409).end();
+    }
+}).get('/:id', async (req, res) => {
     try {
         const Transactions = await TransactionController.getById(req.params.id);
         res.json(Transactions);
@@ -24,9 +35,10 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const g = await TransactionController.create(req.body.date,req.body.type,req.body.reference,req.body.path,req.body.name_subscription,req.body.price_subscription);
+        const g = await TransactionController.create(req.body.type,req.body.reference,req.body.path,req.body.name_subscription,req.body.price_subscription,req.body.subscription,req.user._id);
         res.status(201).end();
     } catch(err) {
+        console.log(err);
         res.status(409).end();
     }
 });

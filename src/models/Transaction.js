@@ -5,6 +5,9 @@ const TransactionSchema = new Schema({
     date: {
         type: Date
     },
+    date_end: {
+        type: Date
+    },
     type: {
         type: String
     },

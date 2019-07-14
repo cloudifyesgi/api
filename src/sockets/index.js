@@ -1,8 +1,9 @@
 'use strict';
 
-const Io = require('socket.io');
+// const Io = require('socket.io');
 
 const bindEvent = require("./../helpers/socket").bindEvent;
+const Io = require('./../config/socket.io');
 const handlers  = require('./routes');
 
 class CloudifySocket {
@@ -17,9 +18,9 @@ class CloudifySocket {
         }
         return CloudifySocket.socket;
     }
-    run(listener) {
-        const io = Io(listener);
-        console.log("socket.io listening on " + listener);
+    run(server) {
+        const io = Io(server);
+        console.log("socket.io listening");
         io.on("connection", (socket) => {
             console.log('connected user');
             this.clientConnected.push(socket);

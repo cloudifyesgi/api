@@ -10,32 +10,34 @@ const FileController    = require("../../controllers").FileController;
 const UserController    = require("../../controllers").UserController;
 const AuthController    = require('../../controllers').AuthController;
 const HistoryController = require('../../controllers').HistoryController;
+const QuotaController   = require('../../controllers').QuotaController;
 
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 router.use(fileUpload());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
+router.get('/', async (req, res) => {
     const users = await FileController.getAll();
     res.json(users);
-}).get('/:id', UserController.checkLevel(1), async (req, res) => {
+}).get('/:id', async (req, res) => {
     try {
         const Files = await FileController.getById(req.params.id);
         res.json(Files);
     } catch (e) {
         res.status(409).end();
     }
-}).get('/:name/versions', async (req, res) => {
+}).get('/:name/:directory/versions', async (req, res) => {
     try {
-        const files = await FileController.getAllVersions(req.params.name);
+        const files = await FileController.getAllVersions(req.params.name, req.params.directory);
         res.json(files);
     } catch (e) {
         console.log(e.toString());
         res.status(409).end();
     }
-}).get('/version/:name/:number', async (req, res) => {
+}).get('/version/:name/:directory/:number', async (req, res) => {
     try {
-        const file = await FileController.getVersion(req.params.name, req.params.number);
+        const file = await FileController.getVersion(req.params.name, req.params.number, req.params.directory);
+        HistoryController.create('reverted', null, file[0]._id, null, null, req.user.id);
         res.json(file);
     } catch (e) {
         console.log(e.toString());
@@ -44,7 +46,7 @@ router.get('/', UserController.checkLevel(1), async (req, res) => {
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/',QuotaController.checkUpload(),async (req, res) => {
     try {
         if (!req.files) {
             console.log('No file to upload or file empty');
@@ -54,9 +56,13 @@ router.post('/', async (req, res) => {
         const isFirstVersion = await FileController.isFirstVersion(req.body.name, req.body.directory);
         if (isFirstVersion) {
             g = await FileController.create(req.body.name, req.body.date_create, 1, req.body.file_type, req.body.user_create, req.body.directory);
+            HistoryController.create('created', null, g._id, null, null, req.user.id);
         } else {
+            await FileController.undeleteOldVersion(req.body.name, req.body.directory);
             const lastVersion = await FileController.getLastVersion(req.body.name, req.body.directory);
-            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion, 10) + 1, req.body.file_type, req.body.user_create, req.body.user_update, req.body.directory);
+            g                 = await FileController.create(req.body.name, req.body.date_create, parseInt(lastVersion.file_version, 10) + 1, req.body.file_type, req.body.user_update, req.body.directory);
+            await FileController.redirectTarget(lastVersion, g);
+            HistoryController.create('updated', null, g._id, null, null, req.user.id);
         }
 
         let fileToUpload = req.files.file;
@@ -70,9 +76,6 @@ router.post('/', async (req, res) => {
                 return res.status(500).send(err);
             console.log('File uploaded!');
         });
-        console.log('parent dir :');
-        console.log(g.parent_directory);
-        HistoryController.create('created', null, g._id, null, null, req.user.id);
         HistoryController.create('addedFile', g.directory, null, null, g._id, req.user.id);
         // const h = await HistoryController.create("upload",req.body.date_create);
         res.status(201).end();
@@ -93,7 +96,7 @@ router.put('/', async (req, res) => {
 
         if (g === null || g === undefined) res.status(204).end();
         else {
-            HistoryController.create('modified', null, g._id, null, null, req.user.id);
+            HistoryController.create('renamed', null, g._id, null, null, req.user.id);
             res.status(200).end();
         }
     } catch (err) {
@@ -102,24 +105,64 @@ router.put('/', async (req, res) => {
     }
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/delete/:id/:idParent', async (req, res) => {
     const id = req.params.id;
-    if (id === undefined) {
+    const idParent = req.params.idParent;
+    if (id === undefined || idParent === undefined) {
+        console.log('id ou idParent undefined');
         return res.status(400).end();
     }
     try {
         const file = await FileController.getById(id);
 
         if(file) {
-            console.log('dir edited after delete');
-            console.log(file.directory);
-            const g = await FileController.delete(id);
+            const g = await FileController.softDelete(id);
+            HistoryController.create('deleted', null, id, null, null, req.user.id);
             HistoryController.create('deletedFile', file.directory, null, null, file._id, req.user.id);
         }
 
         res.status(200).end();
     } catch (err) {
-        console.log(err);
+        console.log(err.toString());
+        res.status(409).end();
+    }
+}).delete('/undelete/:id', async (req, res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const file = await FileController.getById(id);
+
+        if (file) {
+            const g = await FileController.undelete(id);
+            HistoryController.create('restored', null, id, null, null, req.user.id);
+        }
+        res.json(file);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
+        res.status(409).end();
+    }
+}).delete('/hard/:id', async (req ,res) => {
+    const id = req.params.id;
+    if (id === undefined) {
+        console.log('id undefined');
+        return res.status(400).end();
+    }
+
+    try {
+        const file = await FileController.getById(id);
+
+        if (file) {
+            const g = await FileController.hardDelete(id);
+        }
+        res.json(file);
+        res.status(200).end();
+    } catch (e) {
+        console.log(e.toString());
         res.status(409).end();
     }
 });

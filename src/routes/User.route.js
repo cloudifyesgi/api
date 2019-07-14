@@ -9,8 +9,8 @@ const AuthController = require('../controllers').AuthController;
 router.use(bodyParser.json());
 router.use(AuthController.authenticate());
 
-router.get('/', UserController.checkLevel(1), async (req, res) => {
-    const users = await UserController.getAll('-password');
+router.get('/', async (req, res) => {
+    const users = await UserController.getAll();
     res.json(users);
 }).get('/:email', async (req, res) => {
     try {
