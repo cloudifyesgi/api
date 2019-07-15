@@ -21,10 +21,6 @@ class Controller {
         return await this.model.findOne({_id: id});
     }
 
-    async softGetById(id) {
-        return await this.model.findOne({_id: id, deleted: false});
-    }
-
     async update(model, fields) {
 
         if (model === undefined || model === null) {

@@ -47,6 +47,7 @@ router.get('/', async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id, true);
+        console.log(children);
         const breadcrumb = [{name: 'Trash', _id: '0'}];
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
