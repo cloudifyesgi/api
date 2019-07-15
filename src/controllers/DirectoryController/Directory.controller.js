@@ -1,16 +1,16 @@
 'use strict';
 
-const models         = require('../../models');
-const Controller     = require('../Controller');
-const Directory      = models.Directory;
-const fileController = require('../FileController/File.controller');
-const mongoose       = require('mongoose');
-const File           = models.File;
-const uuid           = require('uuid/v1');
-const mkdirp         = require('mkdirp');
-const fs             = require('fs');
-const AdmZip         = require('adm-zip');
-const rimraf         = require("rimraf");
+const models          = require('../../models');
+const Controller      = require('../Controller');
+const Directory       = models.Directory;
+const fileController  = require('../FileController/File.controller');
+const mongoose        = require('mongoose');
+const File            = models.File;
+const uuid            = require('uuid/v1');
+const mkdirp          = require('mkdirp');
+const fs              = require('fs');
+const AdmZip          = require('adm-zip');
+const rimraf          = require("rimraf");
 const Synchronization = models.Synchronization;
 
 class DirectoryController extends Controller {
@@ -20,13 +20,13 @@ class DirectoryController extends Controller {
     }
 
     async create(name, user_create, parent_directory, date) {
-        parent_directory   = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
+        parent_directory = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
         console.log(parent_directory);
         const newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
             user_update: mongoose.Types.ObjectId(user_create),
-            parent_directory: parent_directory !== undefined ? mongoose.Types.ObjectId(parent_directory) : undefined,
+            parent_directory: parent_directory,
             date_create: date
         });
 
@@ -45,9 +45,7 @@ class DirectoryController extends Controller {
 
     async getDirectoryByParent(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
-        if (deleted) {
-            return await Directory.find({deleted: deleted, user_create: userId});
-        }
+        if (deleted) return await Directory.find({user_create: userId, deleted: true});
         if (!parentId) return await Directory.find({
             parent_directory: parentId,
             user_create: userId,

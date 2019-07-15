@@ -34,7 +34,7 @@ class DirectoryClass {
 }
 
 DirectorySchema.loadClass(DirectoryClass);
-DirectorySchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true, overrideMethods: true });
+DirectorySchema.plugin(mongoose_delete, { deletedBy : true, deletedAt : true });
 const Directory = mongoose.model('Directory', DirectorySchema);
 
 module.exports = Directory;
