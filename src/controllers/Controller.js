@@ -54,7 +54,7 @@ class Controller {
         if(model === undefined){
             return undefined;
         }
-        return await this.model.update({_id : model._id}, {deleted: true},(err) => {
+        return await this.model.updateOne({_id : model._id}, {deleted: true},(err) => {
             if (err) {
                 console.error(err);
                 return false;

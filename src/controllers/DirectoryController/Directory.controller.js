@@ -21,6 +21,7 @@ class DirectoryController extends Controller {
 
     async create(name, user_create, parent_directory, date) {
         parent_directory   = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
+        console.log(parent_directory);
         const newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
@@ -28,6 +29,7 @@ class DirectoryController extends Controller {
             parent_directory: parent_directory !== undefined ? mongoose.Types.ObjectId(parent_directory) : undefined,
             date_create: date
         });
+
         return await newDirectory.save();
     }
 
@@ -43,13 +45,15 @@ class DirectoryController extends Controller {
 
     async getDirectoryByParent(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
-        if (deleted) return await this.model.find({user_create: userId, deleted: deleted});
-        if (!parentId) return await this.model.find({
+        if (deleted) {
+            return await Directory.find({deleted: deleted, user_create: userId});
+        }
+        if (!parentId) return await Directory.find({
             parent_directory: parentId,
             user_create: userId,
             deleted: deleted
         });
-        return await this.model.find({parent_directory: parentId, deleted: deleted});
+        return await Directory.find({parent_directory: parentId, deleted: deleted});
 
     }
 
@@ -99,17 +103,17 @@ class DirectoryController extends Controller {
 
     async getByParentId(id) {
         id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await this.model.find({parent_directory: id, deleted: false}).populate('user_create');
+        return await Directory.find({parent_directory: id, deleted: false}).populate('user_create');
     }
 
     async getByParentIdNoUser(id) {
         id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await this.model.find({parent_directory: mongoose.Types.ObjectId(id), deleted: false});
+        return await Directory.find({parent_directory: mongoose.Types.ObjectId(id), deleted: false});
     }
 
     async getByUserCreate(id) {
         id = id === '0' || id === null || id === undefined ? null : mongoose.Types.ObjectId(id);
-        return await this.model.find({user_create: mongoose.Types.ObjectId(id), deleted: false});
+        return await Directory.find({user_create: mongoose.Types.ObjectId(id), deleted: false});
     }
 
     async getFilesByDirectoryNoUser(id) {
@@ -117,7 +121,7 @@ class DirectoryController extends Controller {
     }
 
     async getAll(options) {
-        return await this.model.find({}, options).populate('user_create');
+        return await Directory.find({deleted: false}, options).populate('user_create');
     }
 
     async isDeleted(id) {

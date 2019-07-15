@@ -14,7 +14,7 @@ class RightController extends Controller{
     }
 
     async create(right,directory,file,user) {
-        const exists = await this.model.findOne({directory:directory, file:file, user:user});
+        const exists = await Right.findOne({directory:directory, file:file, user:user});
         if (exists !== null) {
             return null;
         }
@@ -35,7 +35,7 @@ class RightController extends Controller{
     }
 
     async getFoldersByUser(user_id) {
-        let SharedRights = await this.model.find( {user: user_id} );
+        let SharedRights = await Right.find( {user: user_id} );
         let SharedFolders = [];
         const start = async () => {
             await this.asyncForEach(SharedRights, async (
@@ -52,7 +52,7 @@ class RightController extends Controller{
     }
 
     async getFilesByUser(user_id) {
-        let SharedRights = await this.model.find( {user: user_id} );
+        let SharedRights = await Right.find( {user: user_id} );
         let SharedFiles = [];
         const start = async () => {
             await this.asyncForEach(SharedRights, async (
@@ -74,19 +74,19 @@ class RightController extends Controller{
     }
 
     async getRightsByDir(id) {
-        return await this.model.find({directory: id});
+        return await Right.find({directory: id});
     }
 
     async getRightsByFile(id) {
-        return await this.model.find({file: id});
+        return await Right.find({file: id});
     }
 
     async getRightByDirAndUser(sharedDir, userId) {
-        return await this.model.findOne({directory: sharedDir, user: userId});
+        return await Right.findOne({directory: sharedDir, user: userId});
     }
 
     async getRightByFileAndUser(sharedFile, userId) {
-        return await this.model.findOne({file: sharedFile, user: userId});
+        return await Right.findOne({file: sharedFile, user: userId});
     }
 }
 
