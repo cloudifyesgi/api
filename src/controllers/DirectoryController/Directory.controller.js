@@ -177,7 +177,7 @@ class DirectoryController extends Controller {
     }
 
     async undelete(id) {
-        return await Directory.update({_id: id}, {deleted: false});
+        return await Directory.updateOne({_id: id}, {deleted: false});
     }
 
     async undeleteSubFolders(Dir) {

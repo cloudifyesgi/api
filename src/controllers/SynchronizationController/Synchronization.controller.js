@@ -70,7 +70,7 @@ class SynchronizationController extends Controller{
     }
 
     async getSynchronizedParent(dir){
-        if(dir === undefined){
+        if(dir === undefined || dir === null){
             return undefined
         }
         const synchronization = await this.getByDirectory(dir._id);
