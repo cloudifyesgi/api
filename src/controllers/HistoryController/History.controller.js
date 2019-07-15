@@ -14,7 +14,7 @@ class HistoryController extends Controller {
     }
 
     async create(action, directory, file, childDirectory, childFile, user) {
-        directory      = directory !== undefined && directory !== null && directory !== '0' ? mongoose.Types.ObjectId(directory) : null;
+        directory      = directory === '0' || directory === null || directory === undefined ? null :  mongoose.Types.ObjectId(directory);
         file           = file !== undefined && file !== null ? mongoose.Types.ObjectId(file) : null;
         childDirectory = childDirectory === '0' || childDirectory === null || childDirectory === undefined ? null : mongoose.Types.ObjectId(childDirectory);
         childFile      = childFile === '0' || childFile === null || childFile === undefined ? null : mongoose.Types.ObjectId(childFile);

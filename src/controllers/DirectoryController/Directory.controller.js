@@ -21,6 +21,7 @@ class DirectoryController extends Controller {
 
     async create(name, user_create, parent_directory, date) {
         parent_directory   = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
+        console.log(parent_directory);
         const newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
@@ -28,6 +29,7 @@ class DirectoryController extends Controller {
             parent_directory: parent_directory,
             date_create: date
         });
+
         return await newDirectory.save();
     }
 
@@ -43,7 +45,13 @@ class DirectoryController extends Controller {
 
     async getDirectoryByParent(parentId, userId, deleted = false) {
         parentId = parentId === '0' || parentId === null || parentId === undefined ? null : mongoose.Types.ObjectId(parentId);
-        if (deleted) return await this.model.find({user_create: userId, deleted: deleted});
+        console.log(deleted);
+        if (deleted) {
+            console.log(deleted);
+            console.log({deleted: deleted, user_create: mongoose.Types.ObjectId(userId)});
+
+            return await this.model.find({deleted: deleted, user_create: mongoose.Types.ObjectId(userId)});
+        }
         if (!parentId) return await this.model.find({
             parent_directory: parentId,
             user_create: userId,
