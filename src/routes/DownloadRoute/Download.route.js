@@ -18,7 +18,6 @@ router.use(fileUpload());
 
 
 router.get('/', async (req, res) => {
-    console.log('A file id must be specified');
     res.status(404).end();
 }).get('/:id', async (req, res) => {
     try {

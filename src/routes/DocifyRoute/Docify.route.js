@@ -17,7 +17,6 @@ router.use(AuthController.authenticate());
 router.get('/', async(req, res) => {
     try {
         const docify = await DocifyController.softGetAll();
-        console.log(docify);
         res.json(docify).status(200).end();
     } catch(e) {
         res.send(404).end();

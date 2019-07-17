@@ -47,7 +47,6 @@ router.get('/', async (req, res) => {
     try {
         const parentId = req.params.id;
         const children = await DirectoryController.getDirectoryByParent(parentId, req.user.id, true);
-        console.log(children);
         const breadcrumb = [{name: 'Trash', _id: '0'}];
         const result = {children: children, breadcrumb: breadcrumb};
         res.json(result).status(200).end();
@@ -157,7 +156,6 @@ router.delete('/delete/:id', async (req, res) => {
 }).delete('/undelete/:id', async (req, res) => {
     const id = req.params.id;
     if (id === undefined) {
-        console.log('id undefined');
         return res.status(400).end();
     }
 
@@ -177,7 +175,6 @@ router.delete('/delete/:id', async (req, res) => {
 }).delete('/hard/:id', async (req ,res) => {
     const id = req.params.id;
     if (id === undefined) {
-        console.log('id undefined');
         return res.status(400).end();
     }
 

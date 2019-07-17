@@ -49,7 +49,6 @@ router.get('/', async (req, res) => {
 router.post('/',QuotaController.checkUpload(),async (req, res) => {
     try {
         if (!req.files) {
-            console.log('No file to upload or file empty');
             return res.status(409).end();
         }
         let g                = null;
@@ -67,14 +66,12 @@ router.post('/',QuotaController.checkUpload(),async (req, res) => {
 
         let fileToUpload = req.files.file;
         if (!fileToUpload) {
-            console.log('Error while uploading the file');
             return res.status(409).end();
         }
 
         fileToUpload.mv(process.env.FILES_PATH + g._id, function (err) {
             if (err)
                 return res.status(500).send(err);
-            console.log('File uploaded!');
         });
         HistoryController.create('addedFile', g.directory, null, null, g._id, req.user.id);
         // const h = await HistoryController.create("upload",req.body.date_create);
@@ -109,7 +106,6 @@ router.delete('/delete/:id/:idParent', async (req, res) => {
     const id = req.params.id;
     const idParent = req.params.idParent;
     if (id === undefined || idParent === undefined) {
-        console.log('id ou idParent undefined');
         return res.status(400).end();
     }
     try {
@@ -129,7 +125,6 @@ router.delete('/delete/:id/:idParent', async (req, res) => {
 }).delete('/undelete/:id', async (req, res) => {
     const id = req.params.id;
     if (id === undefined) {
-        console.log('id undefined');
         return res.status(400).end();
     }
 
@@ -149,7 +144,6 @@ router.delete('/delete/:id/:idParent', async (req, res) => {
 }).delete('/hard/:id', async (req ,res) => {
     const id = req.params.id;
     if (id === undefined) {
-        console.log('id undefined');
         return res.status(400).end();
     }
 
