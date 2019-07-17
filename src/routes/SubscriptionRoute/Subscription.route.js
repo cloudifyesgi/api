@@ -4,7 +4,6 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const router = express.Router();
 const SubscriptionController = require("../../controllers").SubscriptionController;
-const UserController = require("../../controllers").UserController;
 const AuthController = require('../../controllers').AuthController;
 
 router.use(bodyParser.json());
@@ -14,7 +13,7 @@ router.get('/', async (req, res) => {
     try{
         const users = await SubscriptionController.getAll();
         res.json(users);
-        res.status(201).end();
+        res.status(200).end();
     }catch (e){
         console.log(e);
         res.status(409).end();
@@ -23,7 +22,7 @@ router.get('/', async (req, res) => {
     try{
         const q = await SubscriptionController.getActiveSubscription();
         res.json(q);
-        res.status(201).end();
+        res.status(200).end();
     }catch (e){
         console.log(e);
         res.status(409).end();

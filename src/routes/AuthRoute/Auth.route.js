@@ -14,7 +14,6 @@ router.post('/login', async (req, res, next) => {
         if(response.success) {
             res.json(response);
         } else {
-            console.log(response);
             res.status(401).send(response).end();
         }
     } catch(e) {
@@ -36,8 +35,8 @@ router.post('/register', async (req, res) => {
             await TransactionController.userFirstTransaction(g._id);
             res.status(201).json(g).end();
         } catch(err) {
-            console.log(err.toString());
-            res.status(409).end();
+            console.log(err);
+            res.status(500).end();
         }
     } catch(err) {
         console.log(err);

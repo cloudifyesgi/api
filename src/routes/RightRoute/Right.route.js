@@ -68,7 +68,6 @@ router.post('/', async (req, res) => {
     try {
         const mails = req.body.email;
         if (mails === undefined) {
-            console.log('no email specified');
             return res.status(400).end();
         }
         const ids = [];
@@ -77,7 +76,6 @@ router.post('/', async (req, res) => {
                 element) => {
                 await UserController.getByEmail(element).then( value => {
                     if (value === null) {
-                        console.log('email doesnt exist');
                         return;
                     }
                     ids.push(value._id);

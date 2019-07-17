@@ -13,7 +13,6 @@ class FileControllerSocket {
     async create(data) {
         try {
             if (data.id === '0') {
-                console.log('File ' + data.id + ' doesnt exists');
                 const g = await FileController.create(data.name, Date.now(), 1, data.extension,data.user,data.parent_directory);
                 data.id = g._id;
             } else {
@@ -27,20 +26,17 @@ class FileControllerSocket {
         }
         fs.writeFile(process.env.FILES_PATH + data.id, data.content, function (err) {
             if (err) throw err;
-            console.log(data.id + ' file created !');
         });
     }
 
     async delete(data) {
         try {
-            console.log('ObjectId(data.id) : ' + mongoose.Types.ObjectId(data.id));
             const g = await FileController.delete(mongoose.Types.ObjectId(data.id));
             fs.unlink(process.env.FILES_PATH + data.id, function (err) {
                 if(err){
                     return;
                 }
             });
-            console.log(data.id + ' file deleted !');
         } catch (e) {
             console.log(e.toString());
         }

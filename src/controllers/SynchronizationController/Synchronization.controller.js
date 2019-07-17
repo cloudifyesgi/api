@@ -50,7 +50,6 @@ class SynchronizationController extends Controller{
 
     async getSyncFolderMapById(id){
         let sync = await super.getById(id);
-        console.log(sync);
         let directory = await DirectoryController.getById(sync.directory);
         let array = {};
         array[sync.local_path] = {id:directory._id,parent_id : 0, is_directory: true};

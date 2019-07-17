@@ -22,7 +22,6 @@ class CloudifySocket {
         const io = Io(server);
         console.log("socket.io listening");
         io.on("connection", (socket) => {
-            console.log('connected user');
             this.clientConnected.push(socket);
             handlers.forEach((handler) => {
                 bindEvent(socket, handler);

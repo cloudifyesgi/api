@@ -21,7 +21,6 @@ class DirectoryController extends Controller {
 
     async create(name, user_create, parent_directory, date) {
         parent_directory = parent_directory === '0' ? null : mongoose.Types.ObjectId(parent_directory);
-        console.log(parent_directory);
         const newDirectory = new Directory({
             name: name,
             user_create: mongoose.Types.ObjectId(user_create),
@@ -147,7 +146,6 @@ class DirectoryController extends Controller {
             for (let child of children) {
                 const res = await this.createTree(child._id, currentPath, directoryName, tempDir);
             }
-            console.log(directory.name);
             for (let file of files) {
                 const filePath    = process.env.FILES_PATH + file._id;
                 const newFilePath = `${currentPath}${file.name}`;
